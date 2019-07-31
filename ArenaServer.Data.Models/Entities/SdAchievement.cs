@@ -1,4 +1,6 @@
-﻿namespace ArenaServer.Data
+﻿using System.Collections.Generic;
+
+namespace ArenaServer.Data
 {
     public class SdAchievement
     {
@@ -35,5 +37,7 @@
         public virtual SdPokemon Pokemon_5 { get; set; }
 
         public virtual SdPokemon Pokemon_6 { get; set; }
+
+        public virtual ICollection<SdAchievementPokemon> SdAchievementPokemon { get; set; }
     }
 }

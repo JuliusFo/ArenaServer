@@ -12,7 +12,7 @@ namespace ArenaServer.Data
 
         #region Constructor
 
-        public AppDbContext() : base()
+        public AppDbContext(DbContextOptions options) : base(options)
         {
 
         }
@@ -31,13 +31,15 @@ namespace ArenaServer.Data
 
         public DbSet<Achievements> Achievements { get; set; }
 
+        public DbSet<SdAchievementPokemon> SdAchievementPokemon { get; set; }
+
         #endregion
 
         #region Methods
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=192.168.178.39;Initial Catalog=PokeArena;Persist Security Info=True;User ID=ArenaUser;Password=Kappa123");
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,8 +49,10 @@ namespace ArenaServer.Data
             modelBuilder.ApplyConfiguration(new SdAchievementConfiguration());
             modelBuilder.ApplyConfiguration(new CatchedPokemonConfiguration());
             modelBuilder.ApplyConfiguration(new AchievementsConfiguration());
+            modelBuilder.ApplyConfiguration(new SdAchievementPokemonConfiguration());
         }
 
-            #endregion
-        }
+        #endregion
+
+    }
 }

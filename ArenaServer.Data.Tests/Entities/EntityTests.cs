@@ -1,16 +1,42 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ArenaServer.Data.Tests
 {
     [TestClass]
     public class EntityTests
     {
-        [TestMethod]
-        public void TwitchuserTest()
+        #region Fields
+
+        private TestingDBContext context;
+
+        #endregion
+
+        #region Initialize
+
+        [TestInitialize]
+        public void Initialize()
         {
-            var db = new AppDbContext();
+            context = new TestingDBContext();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            context.Dispose();
+        }
+
+        #endregion
+
+        #region Tesrs
+
+        [TestMethod]
+        public async Task TwitchuserTest()
+        {
+            var db = context.Db;
 
             db.Twitchuser.Add(new Twitchuser()
             {
@@ -19,17 +45,17 @@ namespace ArenaServer.Data.Tests
                 Twitchuser_Id = "00000"
             });
 
-
-            var existing_users = db.Twitchuser.Local.ToList();
+            await db.SaveChangesAsync();
+            var existing_users = db.Twitchuser.ToList();
 
             Assert.IsTrue(existing_users.Any());
             Assert.IsTrue(existing_users[0].DisplayName == "UNIT TEST");
         }
 
         [TestMethod]
-        public void SdPokemonTest()
+        public async Task SdPokemonTest()
         {
-            var db = new AppDbContext();
+            var db = context.Db;
 
             db.SdPokemon.Add(new SdPokemon()
             {
@@ -41,17 +67,17 @@ namespace ArenaServer.Data.Tests
                 Type = PokemonType.Bug
             });
 
-
-            var existing_pokemon = db.SdPokemon.Local.ToList();
+            await db.SaveChangesAsync();
+            var existing_pokemon = db.SdPokemon.ToList();
 
             Assert.IsTrue(existing_pokemon.Any());
             Assert.IsTrue(existing_pokemon[0].Name == "UNIT TEST");
         }
 
         [TestMethod]
-        public void SdAchievementTest()
+        public async Task SdAchievementTest()
         {
-            var db = new AppDbContext();
+            var db = context.Db;
 
             db.SdAchievement.Add(new SdAchievement()
             {
@@ -70,16 +96,17 @@ namespace ArenaServer.Data.Tests
                 }
             });
 
-            var existing_achievements = db.SdAchievement.Local.ToList();
+            await db.SaveChangesAsync();
+            var existing_achievements = db.SdAchievement.ToList();
 
             Assert.IsTrue(existing_achievements.Any());
             Assert.IsTrue(existing_achievements[0].Name == "UNIT TEST");
         }
 
         [TestMethod]
-        public void CatchedPokemonTest()
+        public async Task CatchedPokemonTest()
         {
-            var db = new AppDbContext();
+            var db = context.Db;
 
             db.CatchedPokemon.Add(new CatchedPokemon()
             {
@@ -89,26 +116,46 @@ namespace ArenaServer.Data.Tests
                 Twitchuser_Id = "0"
             });
 
-            var catched_pokemon = db.CatchedPokemon.Local.ToList();
+            await db.SaveChangesAsync();
+            var catched_pokemon = db.CatchedPokemon.ToList();
 
             Assert.IsTrue(catched_pokemon.Any());
         }
 
         [TestMethod]
-        public void AchievementsTest()
+        public async Task AchievementsTest()
         {
-            var db = new AppDbContext();
+            var db = context.Db;
 
             db.Achievements.Add(new Achievements()
             {
                 Twitchuser_Id = "",
                 SdAchievment_Id = 0,
-                 LastFight = DateTime.Now
+                LastFight = DateTime.Now
             });
 
-            var avs = db.Achievements.Local.ToList();
+            await db.SaveChangesAsync();
+            var avs = db.Achievements.ToList();
 
             Assert.IsTrue(avs.Any());
         }
+
+        [TestMethod]
+        public async Task SdAchievementPokemonTest()
+        {
+            var db = context.Db;
+
+            db.SdAchievementPokemon.Add(new SdAchievementPokemon()
+            {
+
+            });
+
+            await db.SaveChangesAsync();
+            var avs = db.SdAchievementPokemon.ToList();
+
+            Assert.IsTrue(avs.Any());
+        }
+
+        #endregion
     }
 }
