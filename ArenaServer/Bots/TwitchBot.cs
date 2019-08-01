@@ -6,6 +6,7 @@ using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
+using TwitchLib.Communication.Events;
 
 namespace ArenaServer.Bots
 {
@@ -14,7 +15,7 @@ namespace ArenaServer.Bots
         #region Fields
 
         //private readonly TwitchUserService userService;
-        private readonly TwitchAccessService accessService;
+        private readonly AccessService accessService;
         private static TwitchAPI api;
 
         //Additional clients
@@ -41,7 +42,7 @@ namespace ArenaServer.Bots
         public TwitchBot(string _channelName)
         {
             //this.userService = new TwitchUserService();
-            this.accessService = new TwitchAccessService();
+            this.accessService = new AccessService();
 
             destinationChannelName = _channelName;
 
@@ -78,12 +79,13 @@ namespace ArenaServer.Bots
 
             //Events
             twitchclient.OnJoinedChannel += onJoinedChannel;
-            //twitchclient.OnDisconnected += onDisconnected;
-            //twitchclient.OnMessageReceived += onMessageReceived;
+            twitchclient.OnDisconnected += onDisconnected;
+            twitchclient.OnMessageReceived += onMessageReceived;
         }
 
         public void Disconnect()
         {
+            automaticreconnect = false;
             twitchclient.Disconnect();
         }
 
@@ -91,19 +93,61 @@ namespace ArenaServer.Bots
 
         #region Twitch events
 
-        /// <summary>
-        /// Event: Channel joined
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        #region Connect/Disconnect
+
         private void onJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             reconnectTries = 0;
             Console.WriteLine("Connected to channel '" + destinationChannelName + "'.");
         }
 
-        #endregion
+        private void onDisconnected(object sender, OnDisconnectedEventArgs e)
+        {
+            try
+            {
+                Console.WriteLine("Disconnected from channel '" + destinationChannelName + "'.");
+
+                //Try to reconnect
+                if (automaticreconnect)
+                {
+                    if (reconnectTries < reconnectTriesMAX)
+                    {
+                        twitchclient.Reconnect();
+                        reconnectTries += 1;
+                    }
+                    else
+                    {
+                        //Wait
+                        Console.WriteLine("Waiting " + reconnectWaitTime + " Milliseconds before the next reconnect try.");
+                        System.Threading.Thread.Sleep(reconnectWaitTime);
+                        reconnectTries = 1;
+                        twitchclient.Reconnect();
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine("Error on automatic reconnect.");
+            }
+        }
 
         #endregion
-    }
+
+        #region Message recieving
+
+        private void onMessageReceived(object sender, OnMessageReceivedArgs e)
+        {
+            if (e.ChatMessage.Message.Equals("!arena_version"))
+            {
+                twitchclient.SendMessage(destinationChannelName, version);
+            }
+        }
+
+        #endregion
+
+
+            #endregion
+
+            #endregion
+        }
 }

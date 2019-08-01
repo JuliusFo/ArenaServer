@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ArenaServer.Services
 {
-    public class TwitchAccessService
+    public class AccessService
     {
         #region Fields
 
@@ -13,7 +13,7 @@ namespace ArenaServer.Services
 
         #region Constructor
 
-        public TwitchAccessService()
+        public AccessService()
         {
 
         }

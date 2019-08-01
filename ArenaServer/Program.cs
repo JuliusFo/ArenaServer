@@ -24,6 +24,8 @@ namespace ArenaServer
             {
                 typed = Console.ReadLine();
             }
+            
+            twitchBot.Disconnect();
         }
     }
 }

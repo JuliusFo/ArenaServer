@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Data.Tests", "A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Data.Models", "ArenaServer.Data.Models\ArenaServer.Data.Models.csproj", "{7C30B594-6FD4-4ED2-B2F8-DB5C3CA8796B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaServer.Services", "ArenaServer.Services\ArenaServer.Services.csproj", "{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Services", "ArenaServer.Services\ArenaServer.Services.csproj", "{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaServer.Data.Transfer", "ArenaServer.Data.Transfer\ArenaServer.Data.Transfer.csproj", "{C9C5F3CB-B8B7-48A2-8E71-9DAB07C00E58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9C5F3CB-B8B7-48A2-8E71-9DAB07C00E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9C5F3CB-B8B7-48A2-8E71-9DAB07C00E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9C5F3CB-B8B7-48A2-8E71-9DAB07C00E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9C5F3CB-B8B7-48A2-8E71-9DAB07C00E58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
