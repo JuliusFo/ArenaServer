@@ -6,7 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="TwitchLib" Version="3.0.1" />
+    <PackageReference Include="TwitchLib.Api" Version="3.0.6-CI-20190707-175305" />
+    <PackageReference Include="TwitchLib.Api.V5.Models" Version="3.0.6-CI-20190707-175305" />
+    <PackageReference Include="TwitchLib.Client" Version="3.0.6-CI-20190707-175300" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ArenaServer.Data\ArenaServer.Data.csproj" />
+    <ProjectReference Include="..\ArenaServer.Services\ArenaServer.Services.csproj" />
   </ItemGroup>
 
 </Project>

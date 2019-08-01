@@ -9,11 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Tests", "ArenaS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Data", "ArenaServer.Data\ArenaServer.Data.csproj", "{EA637E66-FC7D-4979-B0E9-AE9A59253766}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaServer.Data.Configurations", "ArenaServer.Configurations\ArenaServer.Data.Configurations.csproj", "{33DF8810-3CAF-493A-9348-1F5E8BEE5E71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Data.Configurations", "ArenaServer.Configurations\ArenaServer.Data.Configurations.csproj", "{33DF8810-3CAF-493A-9348-1F5E8BEE5E71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaServer.Data.Tests", "ArenaServer.Data.Tests\ArenaServer.Data.Tests.csproj", "{6139BC06-08C3-43DD-AB81-2A09DB8C7BD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Data.Tests", "ArenaServer.Data.Tests\ArenaServer.Data.Tests.csproj", "{6139BC06-08C3-43DD-AB81-2A09DB8C7BD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaServer.Data.Models", "ArenaServer.Data.Models\ArenaServer.Data.Models.csproj", "{7C30B594-6FD4-4ED2-B2F8-DB5C3CA8796B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Data.Models", "ArenaServer.Data.Models\ArenaServer.Data.Models.csproj", "{7C30B594-6FD4-4ED2-B2F8-DB5C3CA8796B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaServer.Services", "ArenaServer.Services\ArenaServer.Services.csproj", "{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{7C30B594-6FD4-4ED2-B2F8-DB5C3CA8796B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C30B594-6FD4-4ED2-B2F8-DB5C3CA8796B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C30B594-6FD4-4ED2-B2F8-DB5C3CA8796B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0069ECD4-E1A0-45F8-9D17-8B86B1CCC22C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
