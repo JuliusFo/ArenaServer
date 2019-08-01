@@ -32,7 +32,7 @@ namespace ArenaServer.Bots
 
         //Bot data
         private const string name = "ArenaBot";
-        private const string version = "Version 0.1.1 Alpha";
+        private const string version = "Version 0.1.2 Alpha";
 
         #endregion
 
