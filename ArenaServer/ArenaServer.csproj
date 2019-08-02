@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ArenaServer.Data\ArenaServer.Data.csproj" />
     <ProjectReference Include="..\ArenaServer.Services\ArenaServer.Services.csproj" />
+    <ProjectReference Include="..\ArenaServer.Utils\ArenaServer.Utils.csproj" />
   </ItemGroup>
 
 </Project>

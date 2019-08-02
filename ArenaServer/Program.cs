@@ -1,4 +1,5 @@
 ﻿using ArenaServer.Bots;
+using ArenaServer.Utils;
 using System;
 
 namespace ArenaServer
@@ -13,9 +14,9 @@ namespace ArenaServer
 
         static void Main(string[] args)
         {
-            Console.WriteLine("----------------------");
-            Console.WriteLine("ArenaBot");
-            Console.WriteLine("----------------------");
+            LogOutput.LogInformation("----------------------");
+            LogOutput.LogInformation("ArenaBot");
+            LogOutput.LogInformation("----------------------");
 
             var twitchBot = new TwitchBot("Skei7");
 

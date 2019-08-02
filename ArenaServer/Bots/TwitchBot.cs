@@ -1,7 +1,6 @@
 ﻿using ArenaServer.Services;
+using ArenaServer.Utils;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -30,10 +29,8 @@ namespace ArenaServer.Bots
         private int reconnectWaitTime = 120;
 
         private readonly string destinationChannelName = "Skei7";
+        private readonly ChatService chatService;
 
-        //Bot data
-        private const string name = "ArenaBot";
-        private const string version = "Version 0.1.2 Alpha";
 
         #endregion
 
@@ -43,6 +40,7 @@ namespace ArenaServer.Bots
         {
             //this.userService = new TwitchUserService();
             this.accessService = new AccessService();
+            this.chatService = new ChatService();
 
             destinationChannelName = _channelName;
 
@@ -98,14 +96,14 @@ namespace ArenaServer.Bots
         private void onJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             reconnectTries = 0;
-            Console.WriteLine("Connected to channel '" + destinationChannelName + "'.");
+            LogOutput.LogInformation("Connected to channel '" + destinationChannelName + "'.");
         }
 
         private void onDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             try
             {
-                Console.WriteLine("Disconnected from channel '" + destinationChannelName + "'.");
+                LogOutput.LogInformation("Disconnected from channel '" + destinationChannelName + "'.");
 
                 //Try to reconnect
                 if (automaticreconnect)
@@ -118,16 +116,16 @@ namespace ArenaServer.Bots
                     else
                     {
                         //Wait
-                        Console.WriteLine("Waiting " + reconnectWaitTime + " Milliseconds before the next reconnect try.");
+                        LogOutput.LogWarning("Waiting " + reconnectWaitTime + " Milliseconds before the next reconnect try.");
                         System.Threading.Thread.Sleep(reconnectWaitTime);
                         reconnectTries = 1;
                         twitchclient.Reconnect();
                     }
                 }
             }
-            catch (Exception Ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("Error on automatic reconnect.");
+                LogOutput.LogError("Error on automatic reconnect." + ex.Message);
             }
         }
 
@@ -137,17 +135,21 @@ namespace ArenaServer.Bots
 
         private void onMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            if (e.ChatMessage.Message.Equals("!arena_version"))
+            var output = chatService.HandleCommand(new Data.Common.Models.TwitchChatMessage()
             {
-                twitchclient.SendMessage(destinationChannelName, version);
-            }
+                Message = e.ChatMessage.Message,
+                TwitchUsername = e.ChatMessage.Username,
+                TwitchUserId = e.ChatMessage.UserId
+            });
+
+            if (!string.IsNullOrWhiteSpace(output)) twitchclient.SendMessage(destinationChannelName, output);
         }
 
         #endregion
 
 
-            #endregion
+        #endregion
 
-            #endregion
-        }
+        #endregion
+    }
 }
