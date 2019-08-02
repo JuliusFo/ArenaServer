@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ArenaServer.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ArenaServer.Data
+namespace ArenaServer.Data.Configurations
 {
     public class CatchedPokemonConfiguration : IEntityTypeConfiguration<CatchedPokemon>
     {

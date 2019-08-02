@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ArenaServer.Data.Configurations;
+using ArenaServer.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArenaServer.Data
 {

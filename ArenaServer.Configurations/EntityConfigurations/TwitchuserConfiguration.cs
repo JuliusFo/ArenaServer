@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ArenaServer.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace ArenaServer.Data
+namespace ArenaServer.Data.Configurations
 {
     public class TwitchuserConfiguration : IEntityTypeConfiguration<Twitchuser>
     {

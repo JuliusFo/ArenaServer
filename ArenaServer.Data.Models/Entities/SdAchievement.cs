@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ArenaServer.Data
+namespace ArenaServer.Data.Models
 {
     public class SdAchievement
     {

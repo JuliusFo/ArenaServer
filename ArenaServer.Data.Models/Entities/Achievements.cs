@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ArenaServer.Data
+namespace ArenaServer.Data.Models
 {
     public class Achievements
     {

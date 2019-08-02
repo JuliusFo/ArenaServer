@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ArenaServer.Data
+namespace ArenaServer.Data.Models
 {
     public class Twitchuser
     {
@@ -11,5 +9,7 @@ namespace ArenaServer.Data
         public string DisplayName { get; set; }
 
         public bool Kz_Log_Enabled { get; set; }
+
+        public DateTime Dt_Last_Userfight { get; set; }
     }
 }
