@@ -4,4 +4,12 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="TransferExtensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ArenaServer.Data.Common.Models\ArenaServer.Data.Common.Models.csproj" />
+  </ItemGroup>
+
 </Project>

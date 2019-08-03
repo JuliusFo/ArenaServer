@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ArenaServer.Data.Transfer
 {
@@ -12,6 +13,6 @@ namespace ArenaServer.Data.Transfer
 
         public DateTime LastUserFight;
 
-        //public List<TransferCatchedPokemon> CatchedPokemonList { get; set; } = new List<TransferCatchedPokemon>();
+        public List<TransferCatchedPokemon> CatchedPokemonList { get; set; } = new List<TransferCatchedPokemon>();
     }
 }

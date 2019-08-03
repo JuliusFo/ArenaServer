@@ -19,9 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Services", "Are
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Data.Transfer", "ArenaServer.Data.Transfer\ArenaServer.Data.Transfer.csproj", "{C9C5F3CB-B8B7-48A2-8E71-9DAB07C00E58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaServer.Data.Common.Models", "ArenaServer.Data.Common.Models\ArenaServer.Data.Common.Models.csproj", "{0F5E4299-B9DE-41D5-B3A7-8D40FD760AD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Data.Common.Models", "ArenaServer.Data.Common.Models\ArenaServer.Data.Common.Models.csproj", "{0F5E4299-B9DE-41D5-B3A7-8D40FD760AD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaServer.Utils", "ArenaServer.Utils\ArenaServer.Utils.csproj", "{A3556F6B-C5A9-4DBB-974A-560CA66AE97E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArenaServer.Utils", "ArenaServer.Utils\ArenaServer.Utils.csproj", "{A3556F6B-C5A9-4DBB-974A-560CA66AE97E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B7F4604E-4E73-4CF6-9082-83FA347F985D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,6 +74,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E26E7F58-5DE5-4B8A-A080-6BECC95C1BF7} = {B7F4604E-4E73-4CF6-9082-83FA347F985D}
+		{6139BC06-08C3-43DD-AB81-2A09DB8C7BD6} = {B7F4604E-4E73-4CF6-9082-83FA347F985D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4AD437F2-E223-4799-B94E-6D53B840AFE3}
