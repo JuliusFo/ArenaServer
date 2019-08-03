@@ -2,6 +2,8 @@
 {
     public class SdPokemon
     {
+        #region Properties
+
         public decimal SdPokemon_Id { get; set; }
 
         public string Name { get; set; }
@@ -15,5 +17,13 @@
         public PokemonRarity Rarity { get; set; }
 
         public float ATK { get; set; }
+
+        #endregion
+
+        #region Methods
+
+
+
+        #endregion
     }
 }

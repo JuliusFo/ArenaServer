@@ -6,6 +6,12 @@ namespace ArenaServer.Data
     {
         private readonly DbContextOptions options;
 
+
+        public AppDbContextFactory()
+        {
+            options = new DbContextOptionsBuilder().Options;
+        }
+
         public AppDbContextFactory(DbContextOptions options)
         {
             this.options = options;
