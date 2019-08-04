@@ -1,4 +1,5 @@
-﻿using ArenaServer.Data.Models;
+﻿using ArenaServer.Data.Common.Models;
+using ArenaServer.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -32,7 +33,7 @@ namespace ArenaServer.Data.Tests
 
         #endregion
 
-        #region Tesrs
+        #region Tests
 
         [TestMethod]
         public async Task TwitchuserTest()

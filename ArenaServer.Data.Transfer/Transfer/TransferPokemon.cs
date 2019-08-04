@@ -1,4 +1,6 @@
-﻿namespace ArenaServer.Data.Transfer
+﻿using ArenaServer.Data.Common.Models;
+
+namespace ArenaServer.Data.Transfer
 {
     public class TransferPokemon
     {

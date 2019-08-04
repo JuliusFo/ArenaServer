@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Threading;
 
-namespace ArenaServer.Data.Tests
+namespace ArenaServer.Data
 {
     public class TestingDBContext
     {

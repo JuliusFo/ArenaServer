@@ -8,4 +8,8 @@
     <ProjectReference Include="..\ArenaServer.Data.Common.Models\ArenaServer.Data.Common.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 </Project>

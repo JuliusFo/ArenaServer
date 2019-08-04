@@ -1,4 +1,5 @@
 ﻿using ArenaServer.Data;
+using ArenaServer.Data.Common.Models;
 using ArenaServer.Data.Models;
 using ArenaServer.Data.Transfer;
 using System;
@@ -11,7 +12,7 @@ namespace ArenaServer.Services
     {
         #region Fields
 
-        AppDbContext db;
+        private readonly AppDbContext db;
 
         #endregion
 
@@ -20,6 +21,11 @@ namespace ArenaServer.Services
         public PokemonService()
         {
             this.db = new AppDbContextFactory().Create();
+        }
+
+        public PokemonService(AppDbContext db)
+        {
+            this.db = db;
         }
 
         #endregion
@@ -50,18 +56,7 @@ namespace ArenaServer.Services
 
         public decimal? GetSdPokemonIdFromName(string pokemonName)
         {
-            if (string.IsNullOrWhiteSpace(pokemonName)) return null;
-
-            var pokemon = db.SdPokemon.Where(p => p.Name == pokemonName).FirstOrDefault();
-
-            if (pokemon == null)
-            {
-                return null;
-            }
-            else
-            {
-                return pokemon.SdPokemon_Id;
-            }
+            return db.SdPokemon.Where(p => p.Name == pokemonName).FirstOrDefault()?.SdPokemon_Id;
         }
 
         public TransferPokemon GetRandomPokemon()
@@ -84,10 +79,6 @@ namespace ArenaServer.Services
         {
             Dictionary<PokemonRarity, int> rarityChances = new Dictionary<PokemonRarity, int>();
             Random rnd = new Random();
-            int commonChance;
-            int rareChance;
-            int ultrarareChance;
-            int legendaryChance;
 
             if (participantCount >= 15)
             {
@@ -104,10 +95,10 @@ namespace ArenaServer.Services
                 rarityChances.Add(PokemonRarity.Common, 45 - 3 * (Convert.ToInt32(participantCount * 0.2)));
             }
 
-            rarityChances.TryGetValue(PokemonRarity.Common, out commonChance);
-            rarityChances.TryGetValue(PokemonRarity.Rare, out rareChance);
-            rarityChances.TryGetValue(PokemonRarity.Ultrarare, out ultrarareChance);
-            rarityChances.TryGetValue(PokemonRarity.Legendary, out legendaryChance);
+            rarityChances.TryGetValue(PokemonRarity.Common, out int commonChance);
+            rarityChances.TryGetValue(PokemonRarity.Rare, out int rareChance);
+            rarityChances.TryGetValue(PokemonRarity.Ultrarare, out int ultrarareChance);
+            rarityChances.TryGetValue(PokemonRarity.Legendary, out int legendaryChance);
 
             int percent = rnd.Next(1, 101);
 
