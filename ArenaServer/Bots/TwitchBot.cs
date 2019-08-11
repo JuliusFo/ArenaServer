@@ -133,16 +133,16 @@ namespace ArenaServer.Bots
 
         #region Message recieving
 
-        private void onMessageReceived(object sender, OnMessageReceivedArgs e)
+        private async void onMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            var output = chatService.HandleCommand(new Data.Common.Models.TwitchChatMessage()
+            var output = await chatService.HandleCommand(new Data.Common.Models.TwitchChatMessage()
             {
                 Message = e.ChatMessage.Message,
                 TwitchUsername = e.ChatMessage.Username,
                 TwitchUserId = e.ChatMessage.UserId
             });
 
-            if (!string.IsNullOrWhiteSpace(output)) twitchclient.SendMessage(destinationChannelName, output);
+            twitchclient.SendMessage(destinationChannelName, output.ToReplyMessage());
         }
 
         #endregion
