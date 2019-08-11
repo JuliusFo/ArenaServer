@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ArenaServer.Data.Common.Models
+﻿namespace ArenaServer.Data.Common.Models
 {
     public static class TwitchChatCommands
     {
@@ -11,5 +7,13 @@ namespace ArenaServer.Data.Common.Models
         public static string GET_STATUS = "!arena_state";
 
         public static string GET_INFO = "!arena_info";
+
+        public static string REGISTER = "!registrieren";
+
+        public static string BOSS = "!boss";
+
+        public static string USERFIGHT = "!fight";
+
+        public static string TEAMUSERFIGHT = "!teamfight";
     }
 }

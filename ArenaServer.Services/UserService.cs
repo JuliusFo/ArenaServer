@@ -47,17 +47,19 @@ namespace ArenaServer.Services
             return (await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userid).FirstOrDefaultAsync()) != null;
         }
 
-        public async void RegisterUser(string userid, string displayname, string starter)
+        public async Task<bool> RegisterUser(string userid, string displayname, string starter)
         {
             if (!await IsUserRegistered(userid))
             {
-
-                var user = db.Twitchuser.Add(new Twitchuser() { Twitchuser_Id = userid, DisplayName = displayname, Kz_Log_Enabled = true });
-                await db.SaveChangesAsync();
+                db.Twitchuser.Add(new Twitchuser() { Twitchuser_Id = userid, DisplayName = displayname, Kz_Log_Enabled = true });
 
                 AddPokemon(userid, pokemonService.GetTransferPokemonFromName(starter));
                 await db.SaveChangesAsync();
+
+                return true;
             }
+
+            return false;
         }
 
         public async void DeleteUser(string userid)
