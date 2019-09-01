@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ArenaServer.Data.Transfer\ArenaServer.Data.Transfer.csproj" />
+  </ItemGroup>
+
 </Project>

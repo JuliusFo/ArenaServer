@@ -18,12 +18,6 @@ namespace ArenaServer.Services
 
         #region Constructor
 
-        public UserService()
-        {
-            this.pokemonService = new PokemonService();
-            this.db = new AppDbContextFactory().Create();
-        }
-
         public UserService(AppDbContext db)
         {
             this.pokemonService = new PokemonService(db);
@@ -47,7 +41,7 @@ namespace ArenaServer.Services
             return (await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userid).FirstOrDefaultAsync()) != null;
         }
 
-        public async Task<bool> RegisterUser(string userid, string displayname, string starter)
+        public async Task<UserRegistrationResponse> RegisterUser(string userid, string displayname, string starter)
         {
             if (!await IsUserRegistered(userid))
             {
@@ -56,10 +50,20 @@ namespace ArenaServer.Services
                 AddPokemon(userid, pokemonService.GetTransferPokemonFromName(starter));
                 await db.SaveChangesAsync();
 
-                return true;
+                return new UserRegistrationResponse()
+                {
+                    RegistrationSuccessfull = true,
+                    UserAlreadyRegistered = false
+                };
             }
-
-            return false;
+            else
+            {
+                return new UserRegistrationResponse()
+                {
+                    RegistrationSuccessfull = false,
+                    UserAlreadyRegistered = true
+                };
+            }
         }
 
         public async void DeleteUser(string userid)

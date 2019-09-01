@@ -1,6 +1,4 @@
-﻿using ArenaServer.Data.Common.Models;
-using ArenaServer.Data.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using ArenaServer.Data.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;

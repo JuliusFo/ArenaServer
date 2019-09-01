@@ -6,7 +6,7 @@ namespace ArenaServer.Data.Common.Models
 {
     public class TwitchChatReplyMessage
     {
-        #region Fieldss
+        #region Fields
 
         private readonly List<string> targetUserNames;
         private readonly string reply;
@@ -21,7 +21,7 @@ namespace ArenaServer.Data.Common.Models
             this.reply = string.IsNullOrWhiteSpace(reply) ? "" : reply;
         }
 
-        public TwitchChatReplyMessage(string targetUserName, string replay)
+        public TwitchChatReplyMessage(string targetUserName, string reply)
         {
             this.targetUserNames = new List<string>() { targetUserName };
             this.reply = string.IsNullOrWhiteSpace(reply) ? "" : reply;

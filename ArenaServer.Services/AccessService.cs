@@ -54,6 +54,19 @@ namespace ArenaServer.Services
             return text.Split(' ')[1];
         }
 
+        public string GetDatabaseConnection()
+        {
+            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            string text;
+
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                text = streamReader.ReadToEnd();
+            }
+
+            return text.Split(' ')[2];
+        }
+
         #endregion
     }
 }

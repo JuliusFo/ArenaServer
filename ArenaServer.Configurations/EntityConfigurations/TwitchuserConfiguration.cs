@@ -12,6 +12,7 @@ namespace ArenaServer.Data.Configurations
             builder.ToTable("Twitchuser").HasKey(u => u.Twitchuser_Id);
 
             builder.Property(u => u.Kz_Log_Enabled).HasConversion(new BoolToZeroOneConverter<int>());
+            //builder.Property(u => u.Dt_Last_Userfight).HasConversion(new DateTimeToBinaryConverter());
         }
     }
 }

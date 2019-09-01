@@ -9,7 +9,7 @@ namespace ArenaServer.Data
 
         public AppDbContextFactory()
         {
-            options = new DbContextOptionsBuilder().Options;
+            options = new DbContextOptionsBuilder().UseSqlServer("Data Source=192.168.178.39;Initial Catalog=PokeArena;Persist Security Info=True;User ID=ArenaUser;Password=Kappa123").Options;
         }
 
         public AppDbContextFactory(DbContextOptions options)

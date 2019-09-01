@@ -1,4 +1,5 @@
-﻿using ArenaServer.Services;
+﻿using ArenaServer.Data;
+using ArenaServer.Services;
 using ArenaServer.Utils;
 using System;
 using TwitchLib.Api;
@@ -16,6 +17,7 @@ namespace ArenaServer.Bots
         //private readonly TwitchUserService userService;
         private readonly AccessService accessService;
         private static TwitchAPI api;
+        private readonly AppDbContext db;
 
         //Additional clients
         private readonly TwitchClient twitchclient;
@@ -38,9 +40,10 @@ namespace ArenaServer.Bots
 
         public TwitchBot(string _channelName)
         {
+            this.db = new AppDbContextFactory().Create();
             //this.userService = new TwitchUserService();
             this.accessService = new AccessService();
-            this.chatService = new ChatService();
+            this.chatService = new ChatService(db);
 
             destinationChannelName = _channelName;
 
@@ -142,7 +145,7 @@ namespace ArenaServer.Bots
                 TwitchUserId = e.ChatMessage.UserId
             });
 
-            twitchclient.SendMessage(destinationChannelName, output.ToReplyMessage());
+            if(null != output) twitchclient.SendMessage(destinationChannelName, output.ToReplyMessage());
         }
 
         #endregion

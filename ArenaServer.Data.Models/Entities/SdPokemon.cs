@@ -1,4 +1,5 @@
-﻿using ArenaServer.Data.Common.Models;
+﻿using System;
+using System.Numerics;
 
 namespace ArenaServer.Data.Models
 {
@@ -14,11 +15,11 @@ namespace ArenaServer.Data.Models
 
         public PokemonType Type { get; set; }
 
-        public float HP { get; set; }
+        public double HP { get; set; }
 
         public PokemonRarity Rarity { get; set; }
 
-        public float ATK { get; set; }
+        public double ATK { get; set; }
 
         #endregion
 

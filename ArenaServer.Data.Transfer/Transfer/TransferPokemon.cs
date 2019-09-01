@@ -1,4 +1,4 @@
-﻿using ArenaServer.Data.Common.Models;
+﻿using ArenaServer.Data.Models;
 
 namespace ArenaServer.Data.Transfer
 {
@@ -10,13 +10,13 @@ namespace ArenaServer.Data.Transfer
 
         public string Description { get; set; }
 
-        public float HP { get; set; }
+        public double HP { get; set; }
 
         public PokemonRarity Rarity { get; set; }
 
         public PokemonType Type { get; set; }
 
-        public float ATK { get; set; }
+        public double ATK { get; set; }
 
         #endregion
 

@@ -1,5 +1,4 @@
 ﻿using ArenaServer.Data;
-using ArenaServer.Data.Common.Models;
 using ArenaServer.Data.Models;
 using ArenaServer.Data.Transfer;
 using System;
@@ -17,11 +16,6 @@ namespace ArenaServer.Services
         #endregion
 
         #region Constructor
-
-        public PokemonService()
-        {
-            this.db = new AppDbContextFactory().Create();
-        }
 
         public PokemonService(AppDbContext db)
         {
@@ -122,7 +116,7 @@ namespace ArenaServer.Services
             return GetRandomPokemon();
         }
 
-        public float GetTypeAdvantageMultiplikator(PokemonType Attacker, PokemonType Defender)
+        public static float GetTypeAdvantageMultiplikator(PokemonType Attacker, PokemonType Defender)
         {
             if (Attacker == PokemonType.Normal)
             {

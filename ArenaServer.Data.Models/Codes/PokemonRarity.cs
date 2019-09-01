@@ -1,4 +1,4 @@
-﻿namespace ArenaServer.Data.Common.Models
+﻿namespace ArenaServer.Data.Models
 {
     public enum PokemonRarity
     {

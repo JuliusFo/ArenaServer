@@ -1,4 +1,5 @@
-﻿using ArenaServer.Data.Common.Models;
+﻿using ArenaServer.Data;
+using ArenaServer.Data.Common.Models;
 using ArenaServer.Utils;
 using System.Threading.Tasks;
 
@@ -19,9 +20,9 @@ namespace ArenaServer.Services
 
         #region Constructor
 
-        public ChatService()
+        public ChatService(AppDbContext db)
         {
-            this.userService = new UserService();
+            this.userService = new UserService(db);
         }
 
         #endregion
@@ -68,6 +69,21 @@ namespace ArenaServer.Services
 
             #endregion
 
+            #region Fight commands
+
+            if (twitchChatMessage.Message.StartsWith(TwitchChatCommands.BOSS))
+            {
+                return await ParticipateInBossFight(twitchChatMessage);
+            }
+
+            #endregion
+
+            if (twitchChatMessage.Message.StartsWith("!"))
+            {
+                LogOutput.LogInformation("User requested unknown command: " + twitchChatMessage.Message);
+
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, TwitchChatResponse.UNKNOWN_COMMAND);
+            }
             return null;
         }
 
@@ -98,6 +114,8 @@ namespace ArenaServer.Services
 
         private async Task<TwitchChatReplyMessage> RegisterUser(TwitchChatMessage twitchChatMessage)
         {
+            LogOutput.LogInformation($"User requested registraation: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+
             var registerDetails = twitchChatMessage.Message.Replace(TwitchChatCommands.REGISTER, "");
             if (!(registerDetails.Equals("Glumanda")
                 || registerDetails.Equals("Schiggy")
@@ -109,15 +127,29 @@ namespace ArenaServer.Services
             }
             else
             {
-                var success = await userService.RegisterUser(twitchChatMessage.TwitchUserId, twitchChatMessage.TwitchUsername, registerDetails);
+                var response = await userService.RegisterUser(twitchChatMessage.TwitchUserId, twitchChatMessage.TwitchUsername, registerDetails);
 
-                if (success)
+                if (response.RegistrationSuccessfull)
                 {
                     return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, TwitchChatResponse.REG_SUCCESS);
+                }
+                else
+                {
+                    if (response.UserAlreadyRegistered)
+                    {
+                        return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, TwitchChatResponse.REG_ALREADY_REG);
+                    }
                 }
 
                 return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, TwitchChatResponse.REG_ERROR_UNKNOWN);
             }
+        }
+
+        private async Task<TwitchChatReplyMessage> ParticipateInBossFight(TwitchChatMessage twitchChatMessage)
+        {
+            await Task.Delay(1);
+
+            return null;
         }
 
         #endregion

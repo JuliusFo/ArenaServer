@@ -1,4 +1,6 @@
-﻿namespace ArenaServer.Data.Models
+﻿using System.Numerics;
+
+namespace ArenaServer.Data.Models
 {
     public class SdAchievementPokemon
     {

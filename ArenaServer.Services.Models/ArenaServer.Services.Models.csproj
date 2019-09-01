@@ -4,8 +4,4 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ArenaServer.Data.Models\ArenaServer.Data.Models.csproj" />
-  </ItemGroup>
-
 </Project>

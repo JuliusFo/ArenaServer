@@ -8,7 +8,7 @@
 
         public static string GET_INFO = "!arena_info";
 
-        public static string REGISTER = "!registrieren";
+        public static string REGISTER = "!registrieren ";
 
         public static string BOSS = "!boss";
 
