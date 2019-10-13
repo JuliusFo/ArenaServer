@@ -8,6 +8,8 @@
 
         public static string GET_INFO = "!arena_info";
 
+        public static string GET_COMMANDS = "!arena_commands";
+
         public static string REGISTER = "!registrieren ";
 
         public static string BOSS = "!boss";

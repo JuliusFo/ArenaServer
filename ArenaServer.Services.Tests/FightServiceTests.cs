@@ -14,7 +14,6 @@ namespace ArenaServer.Services.Tests
         #region Fields
 
         private TestingDBContext context;
-        private Fight fightService;
         private PokemonService pokemonService;
         private UserService userService;
 
@@ -26,7 +25,6 @@ namespace ArenaServer.Services.Tests
         public void Initialize()
         {
             context = new TestingDBContext();
-            fightService = new Fight(context.Db);
             this.pokemonService = new PokemonService(context.Db);
             this.userService = new UserService(context.Db);
         }
@@ -58,6 +56,7 @@ namespace ArenaServer.Services.Tests
             //Pokemon 1 erstellen
             var pokemon_zapdos = new SdPokemon()
             {
+                SdPokemon_Id = 1,
                 ATK = 50,
                 Name = "Zapdos",
                 HP = 999,
@@ -91,6 +90,7 @@ namespace ArenaServer.Services.Tests
             //Pokemon 2 erstellen
             var pokemon_raupy = new SdPokemon()
             {
+                SdPokemon_Id = 2,
                 ATK = 5,
                 Name = "Raupy",
                 HP = 100,
@@ -129,10 +129,12 @@ namespace ArenaServer.Services.Tests
             };
 
             //Kampf ausführen
-            var result = fightService.CalulateOneVSOne(challenger, defender);
+            var fight = new Fight();
+            var input = new FightOptions(challenger, defender, true);
+            var result = fight.CalculateUnlimited(input);
 
             //Kampf auswerten
-            Assert.IsTrue(result.User.DisplayName == "Ash");
+            Assert.IsTrue(result.Winner.DisplayName == "Ash");
         }
 
         #endregion

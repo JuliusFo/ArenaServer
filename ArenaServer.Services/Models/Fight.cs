@@ -30,7 +30,7 @@ namespace ArenaServer.Services
 
         #region Methods
 
-        public FightParticipant CalulateOneVSOne(FightOptions input)
+        private FightParticipant CalulateOneVSOne(FightOptions input)
         {
             bool challengerAttackFirst = randomGenerator.Next(0, 2) == 0;
             var challenger = input.Challenger;
@@ -39,11 +39,11 @@ namespace ArenaServer.Services
             while (((challenger.Pokemon.FirstOrDefault()?.HP ?? 0) > 0) && (defender.Pokemon.FirstOrDefault()?.HP ?? 0) > 0)
             {
                 var defender_pokemon = defender.Pokemon.FirstOrDefault();
-                var attacker_pokemon = defender.Pokemon.FirstOrDefault();
+                var attacker_pokemon = challenger.Pokemon.FirstOrDefault();
 
                 if (challengerAttackFirst)
                 {
-                    var damage = attacker_pokemon.ATK * PokemonService.GetTypeAdvantageMultiplikator(attacker_pokemon.Type, defender_pokemon.Type) + randomGenerator.Next(-2, 3);
+                    var damage = input.ParticipantBonus + attacker_pokemon.ATK * PokemonService.GetTypeAdvantageMultiplikator(attacker_pokemon.Type, defender_pokemon.Type) + randomGenerator.Next(-2, 3);
                     defender_pokemon.HP -= damage;
 
                     if (defender_pokemon.HP <= 0) return challenger;

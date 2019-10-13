@@ -14,8 +14,12 @@ namespace ArenaServer.Bots
     {
         #region Fields
 
-        //private readonly TwitchUserService userService;
+        //Services
+        private readonly UserService userService;
         private readonly AccessService accessService;
+        private readonly BossService bossService;
+        private readonly PokemonService pokemonService;
+
         private static TwitchAPI api;
         private readonly AppDbContext db;
 
@@ -23,6 +27,7 @@ namespace ArenaServer.Bots
         private readonly TwitchClient twitchclient;
         //private readonly BossBot bossbot;
         //private readonly FightBot fightbot;
+        private readonly ChatOutputService chatOutputService;
 
         //Reconnect settings
         private bool automaticreconnect = true;
@@ -31,7 +36,7 @@ namespace ArenaServer.Bots
         private int reconnectWaitTime = 120;
 
         private readonly string destinationChannelName = "Skei7";
-        private readonly ChatService chatService;
+        private readonly ChatInputService chatService;
 
 
         #endregion
@@ -40,15 +45,23 @@ namespace ArenaServer.Bots
 
         public TwitchBot(string _channelName)
         {
+            //Init Client
+            twitchclient = new TwitchClient();
+
+            //Init Database
             this.db = new AppDbContextFactory().Create();
-            //this.userService = new TwitchUserService();
-            this.accessService = new AccessService();
-            this.chatService = new ChatService(db);
+
+            //Init Services
+            accessService = new AccessService();
+            userService = new UserService(db);
+            pokemonService = new PokemonService(db);
+            chatOutputService = new ChatOutputService(twitchclient, _channelName);
+
+            bossService = new BossService(userService, pokemonService, chatOutputService);
+            chatService = new ChatInputService(userService,chatOutputService,bossService);
 
             destinationChannelName = _channelName;
 
-            //Init
-            twitchclient = new TwitchClient();
             //bossbot = new BossBot(twitchclient, destinationChannelName, userService);
             //fightbot = new FightBot(twitchclient, destinationChannelName);
 

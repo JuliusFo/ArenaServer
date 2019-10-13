@@ -6,11 +6,12 @@ namespace ArenaServer.Services
     {
         #region Constructor
 
-        public FightOptions(FightParticipant challenger, FightParticipant defender, bool kz_WithPokemonExchange)
+        public FightOptions(FightParticipant challenger, FightParticipant defender, bool kz_WithPokemonExchange, double participantBonus = 0)
         {
             this.Challenger = challenger;
             this.Defender = defender;
             this.Kz_WithPokemonExchange = kz_WithPokemonExchange;
+            this.ParticipantBonus = participantBonus;
         }
 
         #endregion
@@ -22,6 +23,8 @@ namespace ArenaServer.Services
         public FightParticipant Defender { get; }
 
         public bool Kz_WithPokemonExchange { get; }
+
+        public double ParticipantBonus { get; }
 
         #endregion
     }

@@ -15,7 +15,7 @@ namespace ArenaServer.Data.Models
 
         public DateTime? Dt_Last_Userfight { get; set; }
 
-        public virtual IEnumerable<CatchedPokemon> CatchedPokemon { get; set; }
+        public virtual IEnumerable<CatchedPokemon> CatchedPokemon { get; set; } = new List<CatchedPokemon>();
 
         #endregion
 

@@ -1,8 +1,7 @@
 ﻿using ArenaServer.Data.Transfer;
-using System;
 using System.Collections.Generic;
 
-namespace ArenaServer.Services.BossService
+namespace ArenaServer.Services
 {
     public class BossFightRound
     {
@@ -13,22 +12,18 @@ namespace ArenaServer.Services.BossService
 
         #region Constructor
 
-        public BossFightRound(DateTime startTime, List<TransferTwitchuser> participants, TransferPokemon bossEnemy)
+        public BossFightRound()
         {
-            StartTime = DateTime.Now;
-            Participants = new List<TransferTwitchuser>();
-            BossEnemy = null;
+            this.Participants = new List<TransferTwitchuser>();
         }
 
         #endregion
 
         #region Properies
 
-        public DateTime? StartTime { get;  }
+        public List<TransferTwitchuser> Participants { get;}
 
-        public List<TransferTwitchuser> Participants { get; }
-
-        public TransferPokemon BossEnemy { get; }
+        public TransferPokemon BossEnemy { get; set; }
 
         #endregion
 

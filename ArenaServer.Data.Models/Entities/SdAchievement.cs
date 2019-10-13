@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Numerics;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ArenaServer.Data.Models
 {
     public class SdAchievement
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal SdAchievement_Id { get; set; }
 
         public string Name { get; set; }

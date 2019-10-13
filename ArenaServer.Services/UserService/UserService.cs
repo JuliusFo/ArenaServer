@@ -46,9 +46,9 @@ namespace ArenaServer.Services
             if (!await IsUserRegistered(userid))
             {
                 db.Twitchuser.Add(new Twitchuser() { Twitchuser_Id = userid, DisplayName = displayname, Kz_Log_Enabled = true });
-
-                AddPokemon(userid, pokemonService.GetTransferPokemonFromName(starter));
                 await db.SaveChangesAsync();
+
+                await AddPokemon(userid, pokemonService.GetTransferPokemonFromName(starter),true);
 
                 return new UserRegistrationResponse()
                 {
@@ -66,7 +66,7 @@ namespace ArenaServer.Services
             }
         }
 
-        public async void DeleteUser(string userid)
+        public async Task DeleteUser(string userid)
         {
             if (await IsUserRegistered(userid))
             {
@@ -105,9 +105,9 @@ namespace ArenaServer.Services
 
         #region Pokemon-Handling
 
-        public async void AddPokemon(string userId, TransferPokemon pokemon)
+        public async Task AddPokemon(string userId, TransferPokemon pokemon, bool isRegistration)
         {
-            if (!await IsUserRegistered(userId))
+            if (!await IsUserRegistered(userId) && !isRegistration)
             {
                 return;
             }
@@ -120,7 +120,7 @@ namespace ArenaServer.Services
 
                 if (null == sdPokemonId) return;
 
-                db.CatchedPokemon.Add(new CatchedPokemon() { SdPokemon_Id = sdPokemonId.Value, Pokemon_AmountCatched = 1, Pokemon_AmountOnFightingTeam = 0 });
+                db.CatchedPokemon.Add(new CatchedPokemon() { SdPokemon_Id = sdPokemonId.Value, Pokemon_AmountCatched = 1, Pokemon_AmountOnFightingTeam = 0, Twitchuser_Id = userId });
             }
             else
             {
@@ -130,7 +130,7 @@ namespace ArenaServer.Services
             await db.SaveChangesAsync();
         }
 
-        public async void RemovePokemon(string userId, TransferPokemon pokemon)
+        public async Task RemovePokemon(string userId, TransferPokemon pokemon)
         {
             if (!await IsUserRegistered(userId))
             {

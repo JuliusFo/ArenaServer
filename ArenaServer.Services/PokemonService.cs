@@ -57,7 +57,9 @@ namespace ArenaServer.Services
         {
             Random rnd = new Random();
 
-            return ConvertSdPokemonToTransfer(db.SdPokemon.Where(p => p.SdPokemon_Id == rnd.Next(1, 152)).First());
+            var pkm = db.SdPokemon.ToList();
+
+            return ConvertSdPokemonToTransfer(pkm[rnd.Next(0, pkm.Count)]);
         }
 
         public TransferPokemon GetRandomPokemonWithRarity(PokemonRarity rarity)
@@ -66,7 +68,14 @@ namespace ArenaServer.Services
 
             var pokemonWithRarity = db.SdPokemon.Where(p => p.Rarity == rarity).ToList();
 
-            return ConvertSdPokemonToTransfer(pokemonWithRarity[rnd.Next(0, pokemonWithRarity.Count)]);
+            if (pokemonWithRarity.Any())
+            {
+                return ConvertSdPokemonToTransfer(pokemonWithRarity[rnd.Next(0, pokemonWithRarity.Count)]);
+            }
+            else
+            {
+                return GetRandomPokemon();
+            }
         }
 
         public TransferPokemon GetRandomPokemonWithParticipantCount(int participantCount)

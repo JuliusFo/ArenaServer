@@ -1,8 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TwitchLib.Client" Version="3.0.6-CI-20190916-073325" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ArenaServer.Data.Common.Models\ArenaServer.Data.Common.Models.csproj" />

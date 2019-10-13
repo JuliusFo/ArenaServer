@@ -11,7 +11,7 @@ namespace ArenaServer.Data.Configurations
             builder.ToTable("CatchedPokemon").HasKey(c => c.CatchedPokemon_Id);
 
             builder.HasOne(c => c.SdPokemon).WithMany().HasForeignKey(c => c.SdPokemon_Id);
-            builder.HasOne(c => c.Twitchuser).WithMany().HasForeignKey(c => c.Twitchuser_Id);
+            builder.HasOne(c => c.Twitchuser).WithMany(u => u.CatchedPokemon).HasForeignKey(c => c.Twitchuser_Id);
         }
     }
 }

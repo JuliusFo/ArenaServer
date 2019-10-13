@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,9 +7,9 @@
 
   <ItemGroup>
     <PackageReference Include="TwitchLib" Version="3.0.1" />
-    <PackageReference Include="TwitchLib.Api" Version="3.0.6-CI-20190707-175305" />
-    <PackageReference Include="TwitchLib.Api.V5.Models" Version="3.0.6-CI-20190707-175305" />
-    <PackageReference Include="TwitchLib.Client" Version="3.0.6-CI-20190707-175300" />
+    <PackageReference Include="TwitchLib.Api" Version="3.0.6-CI-20191013-060230" />
+    <PackageReference Include="TwitchLib.Api.V5.Models" Version="3.0.6-CI-20191013-060230" />
+    <PackageReference Include="TwitchLib.Client" Version="3.0.6-CI-20190916-073325" />
   </ItemGroup>
 
   <ItemGroup>

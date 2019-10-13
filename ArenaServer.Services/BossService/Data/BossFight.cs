@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArenaServer.Services.BossService
+namespace ArenaServer.Services
 {
     public class BossFight
     {

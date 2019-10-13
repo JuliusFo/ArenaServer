@@ -1,11 +1,12 @@
 ﻿using ArenaServer.Data;
 using ArenaServer.Data.Common.Models;
+using ArenaServer.Data.Transfer;
 using ArenaServer.Utils;
 using System.Threading.Tasks;
 
 namespace ArenaServer.Services
 {
-    public class ChatService
+    public class ChatInputService
     {
         #region Fields
 
@@ -15,14 +16,21 @@ namespace ArenaServer.Services
 
         //Services
         private readonly UserService userService;
+        private readonly ChatOutputService chatOutputService;
+        private readonly BossService bossService;
 
         #endregion
 
         #region Constructor
 
-        public ChatService(AppDbContext db)
+        public ChatInputService(
+            UserService userService,
+            ChatOutputService chatOutputService,
+            BossService bossService)
         {
-            this.userService = new UserService(db);
+            this.userService = userService;
+            this.chatOutputService = chatOutputService;
+            this.bossService = bossService;
         }
 
         #endregion
@@ -41,6 +49,7 @@ namespace ArenaServer.Services
         {
             #region Basic commands 
 
+            //Version
             if (twitchChatMessage.Message == TwitchChatCommands.GET_VERSION)
             {
                 return GetBotVersion(twitchChatMessage);
@@ -56,6 +65,12 @@ namespace ArenaServer.Services
             if (twitchChatMessage.Message == TwitchChatCommands.GET_INFO)
             {
                 return GetInfo(twitchChatMessage);
+            }
+
+            //Commands
+            if(twitchChatMessage.Message == TwitchChatCommands.GET_COMMANDS)
+            {
+                return GetCommands(twitchChatMessage);
             }
 
             #endregion
@@ -91,6 +106,8 @@ namespace ArenaServer.Services
 
         #region Handle input commands
 
+        #region Standard
+
         private TwitchChatReplyMessage GetBotVersion(TwitchChatMessage twitchChatMessage)
         {
             LogOutput.LogInformation("User requested actual bot version.");
@@ -112,9 +129,20 @@ namespace ArenaServer.Services
             return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, TwitchChatResponse.GET_ARENA_INFO);
         }
 
+        private TwitchChatReplyMessage GetCommands(TwitchChatMessage twitchChatMessage)
+        {
+            LogOutput.LogInformation("User requested command information.");
+
+            return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, TwitchChatResponse.GET_COMMANDS);
+        }
+
+        #endregion
+
+        #region User account
+
         private async Task<TwitchChatReplyMessage> RegisterUser(TwitchChatMessage twitchChatMessage)
         {
-            LogOutput.LogInformation($"User requested registraation: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+            LogOutput.LogInformation($"User requested registration: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
 
             var registerDetails = twitchChatMessage.Message.Replace(TwitchChatCommands.REGISTER, "");
             if (!(registerDetails.Equals("Glumanda")
@@ -145,12 +173,41 @@ namespace ArenaServer.Services
             }
         }
 
+        #endregion
+
+        #region Fighting
+
         private async Task<TwitchChatReplyMessage> ParticipateInBossFight(TwitchChatMessage twitchChatMessage)
         {
-            await Task.Delay(1);
+            LogOutput.LogInformation($"[Bossfight] User requested to particpate in boss fight: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+
+            TransferTwitchuser user_entered_battle = await userService.GetUser(twitchChatMessage.TwitchUserId);
+
+            if (user_entered_battle == null)
+            {
+                LogOutput.LogInformation($"[Bossfight] User is not registered: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Du bist noch nicht registriert. Schreibe !registrieren [Glumanda/Schiggy/Bisasam/Pikachu/Evoli] in den Chat, um dich zu registrieren.");
+            }
+
+            if (!bossService.IsBattleReady())
+            {
+                LogOutput.LogInformation($"[Bossfight] Battle is not ready: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Aktuell streift kein Pokemon durch die Gegend. Versuche es in " + bossService.GetRemainingCoolDown().Minutes + " Minute(n) und " + bossService.GetRemainingCoolDown().Seconds + " Sekunde(n) erneut.");;
+            }
+
+            if (!bossService.IsBattleWaiting())
+            {
+                LogOutput.LogInformation($"[Bossfight] Creating a new boss round: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+                bossService.StartNewBattleRound();
+                chatOutputService.SendMessage("@" + twitchChatMessage.TwitchUsername + " hat ein wildes Pokemon entdeckt! Schreibe !boss in den Chat, um ihm im Kampf beizustehen.");
+            }
+
+            bossService.AddUserToCurrentRound(user_entered_battle);
 
             return null;
         }
+
+        #endregion
 
         #endregion
 
