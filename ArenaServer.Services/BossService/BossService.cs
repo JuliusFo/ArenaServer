@@ -4,7 +4,6 @@ using ArenaServer.Services.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +17,7 @@ namespace ArenaServer.Services
         private readonly UserService userService;
         private readonly PokemonService pokemonService;
         private readonly ChatOutputService chatOutputService;
+        private readonly BossOutputFormatter bossOutputFormatter;
 
         //Settings
         private TimeSpan cooldownTime;
@@ -41,6 +41,7 @@ namespace ArenaServer.Services
             this.userService = userService;
             this.pokemonService = pokemonService;
             this.chatOutputService = chatOutputService;
+            this.bossOutputFormatter = new BossOutputFormatter();
         }
 
         #endregion
@@ -103,7 +104,7 @@ namespace ArenaServer.Services
         {
             if (currentRound.Participants.Count < minimumParticipants)
             {
-                chatOutputService.SendMessage("Es konnten nicht genug Pokemon für einen Kampf gefunden werden. Sammelt euch und versucht es in " + pauseMinutesNotEnoughParticipants + " Minuten erneut!");
+                chatOutputService.SendMessage(bossOutputFormatter.GetOutput_NotEnoughParticipants(pauseMinutesNotEnoughParticipants));
                 cooldownTime = new TimeSpan(0, pauseMinutesNotEnoughParticipants, 0);
                 currentRound = null;
             }
@@ -133,7 +134,7 @@ namespace ArenaServer.Services
                 Thread.Sleep(1000);
             }
 
-            chatOutputService.SendMessage("Ein wildes Pokemon streift durch die Gegend. Schreibe !boss, um den Kampf aufzunehmen!");
+            chatOutputService.SendMessage(bossOutputFormatter.GetOutput_BossAppears());
         }
 
         private async Task CalculateFight()
@@ -173,7 +174,7 @@ namespace ArenaServer.Services
             string output_message;
             if (winners.Any())
             {
-                output_message = "Die Pokemon von folgenden Trainern haben den Kampf gegen " + currentRound.BossEnemy.Name + " gewonnen und konnten es dadurch fangen: ";
+                output_message = bossOutputFormatter.GetOutput_BossWinners(currentRound.BossEnemy.Name);
 
                 for (int w = 0; w < winners.Count; w++)
                 {
@@ -186,7 +187,7 @@ namespace ArenaServer.Services
             }
             else
             {
-                output_message = "Keiner der Trainer konnte " + currentRound.BossEnemy.Name + " besiegen. Versucht es in " + pauseMinutesBetweenRounds + " Minuten noch einmal!";
+                output_message = bossOutputFormatter.GetOuput_BossNoWinners(currentRound.BossEnemy.Name, pauseMinutesBetweenRounds);
             }
 
             //Chat output
