@@ -11,5 +11,7 @@ namespace ArenaServer.Data.Common.Models
         public string TwitchUsername { get; set; }
 
         public string TwitchUserId { get; set; }
+
+        public IEnumerable<string> TargetTwitchUserIds { get; set; }
     }
 }

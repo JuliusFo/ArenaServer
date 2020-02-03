@@ -2,6 +2,7 @@
 using ArenaServer.Data.Common.Models;
 using ArenaServer.Data.Transfer;
 using ArenaServer.Utils;
+using System;
 using System.Threading.Tasks;
 
 namespace ArenaServer.Services
@@ -18,6 +19,7 @@ namespace ArenaServer.Services
         private readonly UserService userService;
         private readonly ChatOutputService chatOutputService;
         private readonly BossService bossService;
+        private readonly UserfightService userfightService;
 
         #endregion
 
@@ -26,11 +28,13 @@ namespace ArenaServer.Services
         public ChatInputService(
             UserService userService,
             ChatOutputService chatOutputService,
-            BossService bossService)
+            BossService bossService,
+            UserfightService userfightService)
         {
             this.userService = userService;
             this.chatOutputService = chatOutputService;
             this.bossService = bossService;
+            this.userfightService = userfightService;
         }
 
         #endregion
@@ -91,6 +95,11 @@ namespace ArenaServer.Services
                 return await ParticipateInBossFight(twitchChatMessage);
             }
 
+            if (twitchChatMessage.Message.StartsWith(TwitchChatCommands.USERFIGHT))
+            {
+                return await ParticipateInUserFight(twitchChatMessage);
+            }
+
             #endregion
 
             if (twitchChatMessage.Message.StartsWith("!"))
@@ -142,7 +151,7 @@ namespace ArenaServer.Services
 
         private async Task<TwitchChatReplyMessage> RegisterUser(TwitchChatMessage twitchChatMessage)
         {
-            LogOutput.LogInformation($"User requested registration: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+            LogOutput.LogInformation($"[Registration] User requested registration: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
 
             var registerDetails = twitchChatMessage.Message.Replace(TwitchChatCommands.REGISTER, "");
             if (!(registerDetails.Equals("Glumanda")
@@ -203,6 +212,58 @@ namespace ArenaServer.Services
             }
 
             bossService.AddUserToCurrentRound(user_entered_battle);
+            LogOutput.LogInformation($"[Bossfight] User entered bossfight: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+
+            return null;
+        }
+
+        private async Task<TwitchChatReplyMessage> ParticipateInUserFight(TwitchChatMessage twitchChatMessage)
+        {
+            LogOutput.LogInformation($"[Userfight] User requested to participate in an user fight: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+
+            var challengingUser = await userService.GetUser(twitchChatMessage.TwitchUserId);
+            var challengedUser = await userService.GetUserByName(twitchChatMessage);
+
+            //Not registered
+            if(null == challengingUser || null == challengedUser)
+            {
+                LogOutput.LogInformation($"[Bossfight] One of the users is not registered.");
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Da ist etwas schiefgelaufen! Du oder dein Gegner haben die Registrierung noch nicht abgeschlossen.");
+            }
+
+            //Full fighting team
+            if(!challengedUser.HasFullFightingTeam() || !challengingUser.HasFullFightingTeam())
+            {
+                LogOutput.LogInformation($"[Bossfight] One of the users dont got a full fighting team.");
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Da ist etwas schiefgelaufen! Du oder dein Gegner haben noch keine 6 Pokemon gefangen.");
+            }
+
+            //Cooldown
+            if(challengedUser.LastUserFight != null && new TimeSpan(0, 10, 0) > (DateTime.Now - challengedUser.LastUserFight) || challengingUser.LastUserFight != null && new TimeSpan(0, 10, 0) > (DateTime.Now - challengingUser.LastUserFight))
+            {
+                LogOutput.LogInformation($"[Bossfight] One of the users is on cooldown.");
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Da ist etwas schiefgelaufen! Du oder dein Gegner sind noch nicht bereit für einen neuen Kampf.");
+            }
+
+            //Challenger already challenging another person
+            if (userfightService.User_IsChallenger(challengingUser))
+            {
+                return new TwitchChatReplyMessage(challengedUser.DisplayName, " du hast bereits einen anderen Kampf gestartet. Bitte warte, bis dieser Kampf zu Ende ist.");
+            }
+
+            //Check if the challenged player already is challenged by the challenger
+            if (userfightService.User_IsChallengedBy(challengingUser, challengedUser))
+            {
+                chatOutputService.SendMessage("@" + challengingUser.DisplayName + " hat die Herausforderung von @" + challengedUser.DisplayName + " angenommen!");
+                await userfightService.StartFight(challengingUser, challengedUser);
+            }
+            else
+            {
+                chatOutputService.SendMessage("@" + challengingUser.DisplayName + " fordert @" + challengedUser.DisplayName + " zu einem Duell heraus! Schreibe !fight @" + challengingUser.DisplayName + ", um den Kampf anzunehmen!");
+
+                //None of the users are in a fight or waiting for each other. Start a new fight round.
+                userfightService.CreateFightRound(challengingUser, challengedUser, false);
+            }
 
             return null;
         }

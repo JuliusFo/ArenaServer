@@ -20,6 +20,11 @@ namespace ArenaServer.Data.Transfer
             }
         }
 
+        public static List<TransferPokemon> GetRandomTeam(this TransferTwitchuser transferTwitchuser)
+        {
+            return transferTwitchuser.CatchedPokemonList.Where(p => p.AmountCatched > 0).Take(6).Select(p => p.Pokemon).ToList();
+        }
+
         public static List<TransferPokemon> GetSelectedTeam(this TransferTwitchuser transferTwitchuser)
         {
             var selected_pkm = transferTwitchuser.CatchedPokemonList.Where(p => p.AmountOnFightingTeam > 0).Select(c => c.Pokemon).ToList();
@@ -30,6 +35,11 @@ namespace ArenaServer.Data.Transfer
             //3. Wenn 1. nicht klappt dann auffüllen wo Amount > 1
 
             return selected_pkm;
+        }
+
+        public static bool HasFullFightingTeam(this TransferTwitchuser transferTwitchuser)
+        {
+            return transferTwitchuser.CatchedPokemonList.Select(c => c.AmountCatched).Sum() > 6;
         }
     }
 }

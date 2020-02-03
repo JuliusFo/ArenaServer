@@ -159,7 +159,8 @@ namespace ArenaServer.Services
                 Description = entity.Description,
                 HP = entity.HP,
                 Rarity = entity.Rarity,
-                Type = entity.Type
+                Type = entity.Type,
+                ATK = entity.ATK
             };
         }
 

@@ -1,4 +1,5 @@
 ﻿using ArenaServer.Data;
+using ArenaServer.Data.Common.Models;
 using ArenaServer.Services;
 using ArenaServer.Utils;
 using System;
@@ -19,6 +20,7 @@ namespace ArenaServer.Bots
         private readonly AccessService accessService;
         private readonly BossService bossService;
         private readonly PokemonService pokemonService;
+        private readonly UserfightService userfightService;
 
         private static TwitchAPI api;
         private readonly AppDbContext db;
@@ -32,8 +34,8 @@ namespace ArenaServer.Bots
         //Reconnect settings
         private bool automaticreconnect = true;
         private int reconnectTries = 0;
-        private int reconnectTriesMAX = 3;
-        private int reconnectWaitTime = 120;
+        private readonly int reconnectTriesMAX = 3;
+        private readonly int reconnectWaitTime = 120;
 
         private readonly string destinationChannelName = "Skei7";
         private readonly ChatInputService chatService;
@@ -51,24 +53,23 @@ namespace ArenaServer.Bots
             //Init Database
             this.db = new AppDbContextFactory().Create();
 
-            //Init Services
+            //Init access
             accessService = new AccessService();
-            userService = new UserService(db);
-            pokemonService = new PokemonService(db);
-            chatOutputService = new ChatOutputService(twitchclient, _channelName);
 
-            bossService = new BossService(userService, pokemonService, chatOutputService);
-            chatService = new ChatInputService(userService,chatOutputService,bossService);
-
-            destinationChannelName = _channelName;
-
-            //bossbot = new BossBot(twitchclient, destinationChannelName, userService);
-            //fightbot = new FightBot(twitchclient, destinationChannelName);
-
-            //Api init
+            //Init Twitch API
             api = new TwitchAPI();
             api.Settings.ClientId = accessService.GetTwitchClientID();
             api.Settings.AccessToken = accessService.GetTwitchAccessToken();
+
+            //Init services
+            userService = new UserService(db,api);
+            pokemonService = new PokemonService(db);
+            chatOutputService = new ChatOutputService(twitchclient, _channelName);
+            bossService = new BossService(userService, pokemonService, chatOutputService);
+            userfightService = new UserfightService(userService, chatOutputService);
+
+            chatService = new ChatInputService(userService, chatOutputService, bossService, userfightService);
+            destinationChannelName = _channelName;
 
             Connect();
         }
@@ -92,9 +93,9 @@ namespace ArenaServer.Bots
             twitchclient.Connect();
 
             //Events
-            twitchclient.OnJoinedChannel += onJoinedChannel;
-            twitchclient.OnDisconnected += onDisconnected;
-            twitchclient.OnMessageReceived += onMessageReceived;
+            twitchclient.OnJoinedChannel += OnJoinedChannel;
+            twitchclient.OnDisconnected += OnDisconnected;
+            twitchclient.OnMessageReceived += OnMessageReceived;
         }
 
         public void Disconnect()
@@ -109,13 +110,13 @@ namespace ArenaServer.Bots
 
         #region Connect/Disconnect
 
-        private void onJoinedChannel(object sender, OnJoinedChannelArgs e)
+        private void OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             reconnectTries = 0;
             LogOutput.LogInformation("Connected to channel '" + destinationChannelName + "'.");
         }
 
-        private void onDisconnected(object sender, OnDisconnectedEventArgs e)
+        private void OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             try
             {
@@ -149,9 +150,9 @@ namespace ArenaServer.Bots
 
         #region Message recieving
 
-        private async void onMessageReceived(object sender, OnMessageReceivedArgs e)
+        private async void OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            var output = await chatService.HandleCommand(new Data.Common.Models.TwitchChatMessage()
+            var output = await chatService.HandleCommand(new TwitchChatMessage()
             {
                 Message = e.ChatMessage.Message,
                 TwitchUsername = e.ChatMessage.Username,

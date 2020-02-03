@@ -1,9 +1,12 @@
 ﻿using ArenaServer.Data;
+using ArenaServer.Data.Common.Models;
 using ArenaServer.Data.Models;
 using ArenaServer.Data.Transfer;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using TwitchLib.Api;
 
 namespace ArenaServer.Services
 {
@@ -13,15 +16,17 @@ namespace ArenaServer.Services
 
         private readonly PokemonService pokemonService;
         private readonly AppDbContext db;
+        private readonly TwitchAPI twitchAPI;
 
         #endregion
 
         #region Constructor
 
-        public UserService(AppDbContext db)
+        public UserService(AppDbContext db, TwitchAPI api)
         {
             this.pokemonService = new PokemonService(db);
             this.db = db;
+            this.twitchAPI = api;
         }
 
         #endregion
@@ -79,13 +84,13 @@ namespace ArenaServer.Services
 
         public async Task<TransferTwitchuser> GetUser(string userid)
         {
-            TransferTwitchuser returnUser;
-
             if (await IsUserRegistered(userid))
             {
-                    var dbUser = await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userid).FirstOrDefaultAsync();
+                    var dbUser = await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userid)
+                    .Include(u => u.CatchedPokemon)
+                    .FirstOrDefaultAsync();
 
-                    returnUser = new TransferTwitchuser()
+                    var returnUser = new TransferTwitchuser()
                 {
                     Id = dbUser.Twitchuser_Id,
                     DisplayName = dbUser.DisplayName,
@@ -98,6 +103,49 @@ namespace ArenaServer.Services
             else
             {
                 return null;
+            }
+        }
+
+        public async Task<TransferTwitchuser> GetUserByName(TwitchChatMessage twitchChatMessage)
+        {
+            var filteredMessage = twitchChatMessage.Message.Replace("@", "");
+
+            try
+            {
+                filteredMessage = filteredMessage.Split(new string[] { " " }, StringSplitOptions.None)[1];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return null;
+            }
+
+
+            //Get user id from twitch
+            var reply = await twitchAPI.V5.Users.GetUserByNameAsync(filteredMessage);
+
+            string id;
+
+            try
+            {
+                id = reply.Matches[0].Id;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return null;
+            }
+
+            var user = await GetUser(id);
+
+            return user;
+        }
+
+        public async Task SetLastFightDt(string userId)
+        {
+            var user = await db.Twitchuser.Where(u => u.Twitchuser_Id == userId).FirstOrDefaultAsync();
+
+            if(null != user)
+            {
+                user.Dt_Last_Userfight = DateTime.Now;
             }
         }
 

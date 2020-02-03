@@ -5,6 +5,7 @@ using ArenaServer.Data.Transfer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TwitchLib.Api;
 
 namespace ArenaServer.Services.Tests
 {
@@ -15,6 +16,8 @@ namespace ArenaServer.Services.Tests
 
         private TestingDBContext context;
         private PokemonService pokemonService;
+        private AccessService accessService;
+        private TwitchAPI api;
         private UserService userService;
 
         #endregion
@@ -26,7 +29,16 @@ namespace ArenaServer.Services.Tests
         {
             context = new TestingDBContext();
             this.pokemonService = new PokemonService(context.Db);
-            this.userService = new UserService(context.Db);
+
+            //Init access
+            accessService = new AccessService();
+
+            //Init Twitch API
+            api = new TwitchAPI();
+            api.Settings.ClientId = accessService.GetTwitchClientID();
+            api.Settings.AccessToken = accessService.GetTwitchAccessToken();
+
+            this.userService = new UserService(context.Db,api);
         }
 
         [TestCleanup]

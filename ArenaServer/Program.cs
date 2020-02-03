@@ -13,7 +13,7 @@ namespace ArenaServer
 
         #endregion
 
-        static void Main(string[] args)
+        static void Main()
         {
             LogOutput.LogInformation("----------------------");
             LogOutput.LogInformation("ArenaBot");

@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TwitchLib.Client" Version="3.0.6-CI-20190916-073325" />
+    <PackageReference Include="TwitchLib.Api" Version="3.1.2" />
+    <PackageReference Include="TwitchLib.Client" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup>

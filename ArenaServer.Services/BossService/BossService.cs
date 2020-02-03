@@ -1,6 +1,7 @@
 ﻿using ArenaServer.Data.Common.Models;
 using ArenaServer.Data.Transfer;
 using ArenaServer.Services.Extensions;
+using ArenaServer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,7 +95,7 @@ namespace ArenaServer.Services
             while (waitedSeconds <= waitingSecondsToJoin)
             {
                 waitedSeconds += 1;
-                await Task.Delay(1);
+                await Task.Delay(1000);
             }
             StartFight();
         }
@@ -104,6 +105,7 @@ namespace ArenaServer.Services
         {
             if (currentRound.Participants.Count < minimumParticipants)
             {
+                LogOutput.LogInformation("[Bossfight] Abort boss round as not enough participants were found.");
                 chatOutputService.SendMessage(bossOutputFormatter.GetOutput_NotEnoughParticipants(pauseMinutesNotEnoughParticipants));
                 cooldownTime = new TimeSpan(0, pauseMinutesNotEnoughParticipants, 0);
                 currentRound = null;
@@ -153,6 +155,8 @@ namespace ArenaServer.Services
                 atk_participants_bonus = 0.2 * currentRound.Participants.Count;
             }
 
+            LogOutput.LogInformation("[Bossfight] Calculating boss fight. Boss Pokemon:" + currentRound.BossEnemy.Name + ", HP:" + currentRound.BossEnemy.HP);
+
             //Fight
             for (int i = 0; i < currentRound.Participants.Count; i++)
             {
@@ -192,6 +196,7 @@ namespace ArenaServer.Services
 
             //Chat output
             chatOutputService.SendMessage(output_message);
+            LogOutput.LogInformation("[Bossfight] Boss fight ended. Winners:" + string.Join(",", winners.Select(w => w.DisplayName)));
 
             #endregion Register all winner pokemon and write chat msg
 
