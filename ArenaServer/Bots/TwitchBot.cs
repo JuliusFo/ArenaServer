@@ -155,7 +155,7 @@ namespace ArenaServer.Bots
             var output = await chatService.HandleCommand(new TwitchChatMessage()
             {
                 Message = e.ChatMessage.Message,
-                TwitchUsername = e.ChatMessage.Username,
+                TwitchUsername = e.ChatMessage.DisplayName,
                 TwitchUserId = e.ChatMessage.UserId
             });
 
