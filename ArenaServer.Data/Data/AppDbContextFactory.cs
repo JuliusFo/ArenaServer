@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Text;
 
 namespace ArenaServer.Data
 {
@@ -6,11 +8,10 @@ namespace ArenaServer.Data
     {
         private readonly DbContextOptions options;
 
-
         public AppDbContextFactory()
         {
             options = new DbContextOptionsBuilder()
-                .UseSqlServer("Data Source=192.168.178.39;Initial Catalog=PokeArena;Persist Security Info=True;User ID=ArenaUser;Password=Kappa123")
+                .UseSqlServer(GetDatabaseConnection())
                 .UseLazyLoadingProxies()
                 .Options;
         }
@@ -23,6 +24,19 @@ namespace ArenaServer.Data
         public AppDbContext Create()
         {
             return new AppDbContext(options);
+        }
+
+        public string GetDatabaseConnection()
+        {
+            var fileStream = new FileStream("C:/Temp/creds.txt", FileMode.Open, FileAccess.Read);
+            string text;
+
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+            {
+                text = streamReader.ReadToEnd();
+            }
+
+            return text.Split('#')[2];
         }
     }
 }

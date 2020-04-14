@@ -38,7 +38,7 @@ namespace ArenaServer.Services
                 text = streamReader.ReadToEnd();
             }
 
-            return text.Split(' ')[0];
+            return text.Split('#')[0];
         }
 
         public string GetTwitchAccessToken()
@@ -51,20 +51,7 @@ namespace ArenaServer.Services
                 text = streamReader.ReadToEnd();
             }
 
-            return text.Split(' ')[1];
-        }
-
-        public string GetDatabaseConnection()
-        {
-            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            string text;
-
-            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
-            {
-                text = streamReader.ReadToEnd();
-            }
-
-            return text.Split(' ')[2];
+            return text.Split('#')[1];
         }
 
         #endregion

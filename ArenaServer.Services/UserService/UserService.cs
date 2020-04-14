@@ -86,11 +86,11 @@ namespace ArenaServer.Services
         {
             if (await IsUserRegistered(userid))
             {
-                    var dbUser = await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userid)
-                    .Include(u => u.CatchedPokemon)
-                    .FirstOrDefaultAsync();
+                var dbUser = await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userid)
+                .Include(u => u.CatchedPokemon)
+                .FirstOrDefaultAsync();
 
-                    var returnUser = new TransferTwitchuser()
+                var returnUser = new TransferTwitchuser()
                 {
                     Id = dbUser.Twitchuser_Id,
                     DisplayName = dbUser.DisplayName,
@@ -98,7 +98,8 @@ namespace ArenaServer.Services
                 };
 
                 returnUser.CatchedPokemonList = dbUser.CatchedPokemon.Select(cp => ConvertCatchedPokemonToTransfer(cp)).ToList();
-                    return returnUser;
+                
+                return returnUser;
             }
             else
             {
@@ -160,15 +161,11 @@ namespace ArenaServer.Services
                 return;
             }
 
-            var catchedPokemon = await db.CatchedPokemon.Where(cp => cp.Twitchuser_Id == userId && cp.SdPokemon.Name == pokemon.Name).FirstOrDefaultAsync();
+            var catchedPokemon = await db.CatchedPokemon.Where(cp => cp.Twitchuser_Id == userId && cp.SdPokemon.SdPokemon_Id == pokemon.ID).FirstOrDefaultAsync();
 
             if (null == catchedPokemon)
             {
-                var sdPokemonId = pokemonService.GetSdPokemonIdFromName(pokemon.Name);
-
-                if (null == sdPokemonId) return;
-
-                db.CatchedPokemon.Add(new CatchedPokemon() { SdPokemon_Id = sdPokemonId.Value, Pokemon_AmountCatched = 1, Pokemon_AmountOnFightingTeam = 0, Twitchuser_Id = userId });
+                db.CatchedPokemon.Add(new CatchedPokemon() { SdPokemon_Id = pokemon.ID, Pokemon_AmountCatched = 1, Pokemon_AmountOnFightingTeam = 0, Twitchuser_Id = userId });
             }
             else
             {
@@ -185,7 +182,7 @@ namespace ArenaServer.Services
                 return;
             }
 
-            var catchedPokemon = await db.CatchedPokemon.Where(cp => cp.Twitchuser_Id == userId && cp.SdPokemon.Name == pokemon.Name).FirstOrDefaultAsync();
+            var catchedPokemon = await db.CatchedPokemon.Where(cp => cp.Twitchuser_Id == userId && cp.SdPokemon.SdPokemon_Id == pokemon.ID).FirstOrDefaultAsync();
 
             if (null == catchedPokemon) return;
 
@@ -218,7 +215,8 @@ namespace ArenaServer.Services
                     HP = entity.SdPokemon.HP,
                     Name = entity.SdPokemon.Name,
                     Rarity = entity.SdPokemon.Rarity,
-                    Type = entity.SdPokemon.Type
+                    Type = entity.SdPokemon.Type,
+                    ID = entity.SdPokemon_Id
                 }
             };
         }

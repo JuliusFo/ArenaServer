@@ -33,7 +33,7 @@ namespace ArenaServer.Services
             expiredFights = new List<UserfightRound>();
 
             //Start timeout check thread
-            new Thread(() => { CheckForTimeouts(); }).Start();
+            //new Thread(() => { CheckForTimeouts(); }).Start();
         }
 
         #endregion
@@ -65,10 +65,11 @@ namespace ArenaServer.Services
                 //Find expired rounds
                 foreach(var onGoingFight in onGoingFights)
                 {
-                    if ((onGoingFight.CreatedDt - DateTimeOffset.Now).TotalSeconds > timeUntilStartSec)
+                    if ((DateTimeOffset.Now - onGoingFight.CreatedDt).TotalSeconds > timeUntilStartSec)
                     {
                         chatOutputService.SendMessage("@" + onGoingFight.Defender.DisplayName + " hat die Herausforderung von @" + onGoingFight.Attacker.DisplayName + " nicht angenommen. Die Runde wurde abgebrochen.");
                         expiredFights.Add(onGoingFight);
+                        //onGoingFights.Remove(onGoingFight);
                     }
                 }
 
@@ -97,7 +98,7 @@ namespace ArenaServer.Services
                 var result = await fightround.Fight();
 
                 //Twitch output
-                chatOutputService.SendMessage("Aus dem Kampf zwischen @" + challengerUser.DisplayName + " und @" + challengedUser.DisplayName + " konnte @" + result.Winner + " erfolgreich hervorgehen. @" + result.Winner + " erhält als Gewinn " + result.ExchangePokemon.Name + "!");
+                chatOutputService.SendMessage("Aus dem Kampf zwischen @" + challengerUser.DisplayName + " und @" + challengedUser.DisplayName + " konnte @" + result.Winner.DisplayName + " erfolgreich hervorgehen. @" + result.Winner.DisplayName + " erhält als Gewinn " + result.ExchangePokemon.Name + "!");
 
                 //Clean up
                 onGoingFights.Remove(fightround);

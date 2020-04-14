@@ -143,6 +143,7 @@ namespace ArenaServer.Services
                 {
                     case PokemonType.Normal: return 1.25f;
                     case PokemonType.Flying: return 0.75f;
+                    default: return 1;
                 }
             }
 
@@ -160,7 +161,8 @@ namespace ArenaServer.Services
                 HP = entity.HP,
                 Rarity = entity.Rarity,
                 Type = entity.Type,
-                ATK = entity.ATK
+                ATK = entity.ATK,
+                ID = entity.SdPokemon_Id
             };
         }
 
