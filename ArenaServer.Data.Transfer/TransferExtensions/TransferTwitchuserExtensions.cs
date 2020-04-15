@@ -64,5 +64,10 @@ namespace ArenaServer.Data.Transfer
         {
             return transferTwitchuser.CatchedPokemonList.Select(c => c.AmountCatched).Sum() >= 6;
         }
+
+        public static bool HasFullSelectedFightingTeam(this TransferTwitchuser transferTwitchuser)
+        {
+            return transferTwitchuser.CatchedPokemonList.Select(c => c.AmountOnFightingTeam).Sum() >= 6;
+        }
     }
 }

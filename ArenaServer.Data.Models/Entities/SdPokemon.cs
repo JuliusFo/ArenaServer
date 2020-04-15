@@ -1,7 +1,4 @@
-﻿using System;
-using System.Numerics;
-
-namespace ArenaServer.Data.Models
+﻿namespace ArenaServer.Data.Models
 {
     public class SdPokemon
     {
@@ -20,12 +17,6 @@ namespace ArenaServer.Data.Models
         public PokemonRarity Rarity { get; set; }
 
         public double ATK { get; set; }
-
-        #endregion
-
-        #region Methods
-
-
 
         #endregion
     }

@@ -131,7 +131,7 @@ namespace ArenaServer.Data.Tests
             {
                 Twitchuser_Id = "",
                 SdAchievment_Id = 0,
-                LastFight = DateTime.Now
+                LastFight = DateTime.Now,
             });
 
             await db.SaveChangesAsync();

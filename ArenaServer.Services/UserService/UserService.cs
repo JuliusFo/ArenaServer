@@ -1,5 +1,6 @@
 ﻿using ArenaServer.Data;
 using ArenaServer.Data.Common.Models;
+using ArenaServer.Data.Common.Models.Extensions;
 using ArenaServer.Data.Models;
 using ArenaServer.Data.Transfer;
 using Microsoft.EntityFrameworkCore;
@@ -109,20 +110,15 @@ namespace ArenaServer.Services
 
         public async Task<TransferTwitchuser> GetUserByName(TwitchChatMessage twitchChatMessage)
         {
-            var filteredMessage = twitchChatMessage.Message.Replace("@", "");
+            var userName = twitchChatMessage.GetTargetUserName();
 
-            try
-            {
-                filteredMessage = filteredMessage.Split(new string[] { " " }, StringSplitOptions.None)[1];
-            }
-            catch (IndexOutOfRangeException)
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 return null;
             }
 
-
             //Get user id from twitch
-            var reply = await twitchAPI.V5.Users.GetUserByNameAsync(filteredMessage);
+            var reply = await twitchAPI.V5.Users.GetUserByNameAsync(userName);
 
             string id;
 

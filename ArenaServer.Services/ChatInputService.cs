@@ -1,6 +1,8 @@
 ﻿using ArenaServer.Data;
 using ArenaServer.Data.Common.Models;
+using ArenaServer.Data.Common.Models.Extensions;
 using ArenaServer.Data.Transfer;
+using ArenaServer.Services.UserFightService;
 using ArenaServer.Utils;
 using System;
 using System.Threading.Tasks;
@@ -97,7 +99,12 @@ namespace ArenaServer.Services
 
             if (twitchChatMessage.Message.StartsWith(TwitchChatCommands.USERFIGHT))
             {
-                return await ParticipateInUserFight(twitchChatMessage);
+                return await ParticipateInUserFight(twitchChatMessage, false);
+            }
+
+            if (twitchChatMessage.Message.StartsWith(TwitchChatCommands.TEAMUSERFIGHT))
+            {
+                return await ParticipateInUserFight(twitchChatMessage, true);
             }
 
             #endregion
@@ -217,32 +224,34 @@ namespace ArenaServer.Services
             return null;
         }
 
-        private async Task<TwitchChatReplyMessage> ParticipateInUserFight(TwitchChatMessage twitchChatMessage)
+        private async Task<TwitchChatReplyMessage> ParticipateInUserFight(TwitchChatMessage twitchChatMessage, bool teamFight)
         {
             LogOutput.LogInformation($"[Userfight] User requested to participate in an user fight: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
 
             var challengingUser = await userService.GetUser(twitchChatMessage.TwitchUserId);
+            var challengingUserName = twitchChatMessage.TwitchUsername;
             var challengedUser = await userService.GetUserByName(twitchChatMessage);
+            var challengedUserName = twitchChatMessage.GetTargetUserName();
 
             //Not registered
-            if(null == challengingUser || null == challengedUser)
+            var usersExisting = UserfightCheckService.CheckUsersExisting(challengingUser, challengingUserName, challengedUser, challengedUserName);
+            if(null != usersExisting)
             {
-                LogOutput.LogInformation($"[Bossfight] One of the users is not registered.");
-                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Da ist etwas schiefgelaufen! Du oder dein Gegner haben die Registrierung noch nicht abgeschlossen.");
+                return usersExisting;
             }
 
             //Full fighting team
-            if(!challengedUser.HasFullFightingTeam() || !challengingUser.HasFullFightingTeam())
+            var fullFightingTeam = UserfightCheckService.CheckUserHasTeam(challengingUser, challengedUser, teamFight);
+            if(null != fullFightingTeam)
             {
-                LogOutput.LogInformation($"[Bossfight] One of the users dont got a full fighting team.");
-                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Da ist etwas schiefgelaufen! Du oder dein Gegner haben noch keine 6 Pokemon gefangen.");
+                return fullFightingTeam;
             }
 
             //Cooldown
-            if(challengedUser.LastUserFight != null && new TimeSpan(0, 10, 0) > (DateTime.Now - challengedUser.LastUserFight) || challengingUser.LastUserFight != null && new TimeSpan(0, 10, 0) > (DateTime.Now - challengingUser.LastUserFight))
+            var usersOnCooldown = UserfightCheckService.CheckUserTimeout(challengingUser, challengedUser, new TimeSpan(0, 10, 0));
+            if(null != usersOnCooldown)
             {
-                LogOutput.LogInformation($"[Bossfight] One of the users is on cooldown.");
-                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Da ist etwas schiefgelaufen! Du oder dein Gegner sind noch nicht bereit für einen neuen Kampf.");
+                return usersOnCooldown;
             }
 
             //Challenger already challenging another person
@@ -262,7 +271,7 @@ namespace ArenaServer.Services
                 chatOutputService.SendMessage("@" + challengingUser.DisplayName + " fordert @" + challengedUser.DisplayName + " zu einem Duell heraus! Schreibe !fight @" + challengingUser.DisplayName + ", um den Kampf anzunehmen!");
 
                 //None of the users are in a fight or waiting for each other. Start a new fight round.
-                userfightService.CreateFightRound(challengingUser, challengedUser, false);
+                userfightService.CreateFightRound(challengingUser, challengedUser, teamFight);
             }
 
             return null;

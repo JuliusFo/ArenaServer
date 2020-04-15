@@ -1,11 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ArenaServer.Data.Models
 {
     public class Achievements
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal Achievement_Id { get; set; }
 
         public string Twitchuser_Id { get; set; }

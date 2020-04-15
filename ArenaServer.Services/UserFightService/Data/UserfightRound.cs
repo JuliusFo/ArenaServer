@@ -13,12 +13,13 @@ namespace ArenaServer.Services
         private readonly Random randomGenerator;
         private readonly UserService userService;
         private readonly bool isSelectedFight;
+        private readonly bool withExchange;
 
         #endregion
 
         #region Constructor
 
-        public UserfightRound(UserService userService, TransferTwitchuser attacker, TransferTwitchuser defender, bool isSelectedFight = false)
+        public UserfightRound(UserService userService, TransferTwitchuser attacker, TransferTwitchuser defender, bool withExchange, bool isSelectedFight = false)
         {
             this.Attacker = attacker;
             this.Defender = defender;
@@ -27,6 +28,7 @@ namespace ArenaServer.Services
             this.randomGenerator = new Random();
             this.userService = userService;
             this.isSelectedFight = isSelectedFight;
+            this.withExchange = withExchange;
         }
 
         #endregion
@@ -76,12 +78,12 @@ namespace ArenaServer.Services
 
             if (result.Winner.Equals(Attacker))
             {
-                await ExchangePokemon(true, exchangePokemonDEF);
+                if(withExchange) await ExchangePokemon(true, exchangePokemonDEF);
                 return new FightResult(result.Winner, exchangePokemonDEF);
             }
             else
             {
-                await ExchangePokemon(false, exchangePokemonATK);
+                if (withExchange) await ExchangePokemon(false, exchangePokemonATK);
                 return new FightResult(result.Winner, exchangePokemonATK);
             }
         }

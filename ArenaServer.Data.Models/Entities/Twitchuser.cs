@@ -18,11 +18,5 @@ namespace ArenaServer.Data.Models
         public virtual IEnumerable<CatchedPokemon> CatchedPokemon { get; set; } = new List<CatchedPokemon>();
 
         #endregion
-
-        #region Methods
-
-
-
-        #endregion
     }
 }

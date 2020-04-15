@@ -1,11 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Numerics;
-
-namespace ArenaServer.Data.Models
+﻿namespace ArenaServer.Data.Models
 {
     public class CatchedPokemon
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal CatchedPokemon_Id { get; set; }
 
         public int Pokemon_AmountCatched { get; set; }
