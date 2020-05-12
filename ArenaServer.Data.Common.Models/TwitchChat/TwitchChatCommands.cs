@@ -17,5 +17,7 @@
         public static string USERFIGHT = "!fight";
 
         public static string TEAMUSERFIGHT = "!teamfight";
+
+        public static string AVFIGHT = "!challenge";
     }
 }

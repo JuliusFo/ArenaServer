@@ -143,6 +143,23 @@ namespace ArenaServer.Services
             if(null != user)
             {
                 user.Dt_Last_Userfight = DateTime.Now;
+                await db.SaveChangesAsync();
+            }
+        }
+
+        public async Task SetLastAVFightDt(string userId, string avName)
+        {
+            var user = await db.Twitchuser.Where(u => u.Twitchuser_Id == userId).FirstOrDefaultAsync();
+
+            if(null != user)
+            {
+                var av = user.Achievements.Where(a => a.SdAchievement.Name == avName).FirstOrDefault();
+
+                if(null != av)
+                {
+                    av.LastFight = DateTime.Now;
+                    await db.SaveChangesAsync();
+                }
             }
         }
 
@@ -192,6 +209,48 @@ namespace ArenaServer.Services
             }
 
             await db.SaveChangesAsync();
+        }
+
+        #endregion
+
+        #region AV-Handling
+
+        public async Task<UserAchievementResponse> CheckAndAddAchievement(string userId)
+        {
+            bool result = false;
+            var dbUser = await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userId).FirstOrDefaultAsync();
+            var sdAchievements = await db.SdAchievement.ToListAsync();
+            var amountCatched = dbUser.CatchedPokemon.Sum(c => c.Pokemon_AmountCatched);
+            var unlockedAchievements = sdAchievements.Where(sdA => !dbUser.Achievements.Any(a => a.SdAchievment_Id == sdA.SdAchievement_Id) && amountCatched >= sdA.UnlockedOnCount).ToList();
+
+            foreach(var unlockedAchievement in unlockedAchievements ?? Enumerable.Empty<SdAchievement>())
+            {
+                db.Achievements.Add(new Achievements()
+                {
+                    SdAchievment_Id = unlockedAchievement.SdAchievement_Id,
+                    Twitchuser_Id = dbUser.Twitchuser_Id
+                });
+                result = true;
+            }
+
+            await db.SaveChangesAsync();
+
+            return new UserAchievementResponse(result, unlockedAchievements.Select(u => new UserAchievementResponseItem(u.Name, u.NPCName)));
+        }
+
+        public async Task<bool> CanFightAcievement(string userId, string avName)
+        {
+            var dbUser = await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userId).FirstOrDefaultAsync();
+            var listFightTS = new TimeSpan(0, 10, 0);
+            
+            if(null != dbUser)
+            {
+                return dbUser.Achievements.Any(a => a.SdAchievement.NPCName == avName && ((a.LastFight.HasValue && (DateTime.Now - a.LastFight) > listFightTS) || a.LastFight == null));
+            }
+            else
+            {
+                return false;
+            }
         }
 
         #endregion

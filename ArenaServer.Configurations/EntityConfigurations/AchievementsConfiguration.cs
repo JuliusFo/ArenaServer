@@ -11,7 +11,7 @@ namespace ArenaServer.Data.Configurations
             builder.ToTable("Achievements").HasKey(u => u.Achievement_Id);
 
             builder.HasOne(a => a.SdAchievement).WithMany().HasForeignKey(a => a.SdAchievment_Id);
-            builder.HasOne(a => a.Twitchuser).WithMany().HasForeignKey(a => a.Twitchuser_Id);
+            builder.HasOne(a => a.Twitchuser).WithMany(u => u.Achievements).HasForeignKey(a => a.Twitchuser_Id);
         }
     }
 }

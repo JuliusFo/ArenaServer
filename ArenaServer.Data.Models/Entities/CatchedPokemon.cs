@@ -1,7 +1,10 @@
-﻿namespace ArenaServer.Data.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ArenaServer.Data.Models
 {
     public class CatchedPokemon
     {
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public decimal CatchedPokemon_Id { get; set; }
 
         public int Pokemon_AmountCatched { get; set; }

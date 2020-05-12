@@ -33,7 +33,7 @@ namespace ArenaServer.Services
             expiredFights = new List<UserfightRound>();
 
             //Start timeout check thread
-            //new Thread(() => { CheckForTimeouts(); }).Start();
+            new Thread(() => { CheckForTimeouts(); }).Start();
         }
 
         #endregion
@@ -51,6 +51,7 @@ namespace ArenaServer.Services
             while (true)
             {
                 List<UserfightRound> expiredFightToRemoveList = new List<UserfightRound>();
+                List<UserfightRound> expiredOnGoingFightsToRemoveList = new List<UserfightRound>();
 
                 foreach(var expiredFight in expiredFights)
                 {
@@ -69,7 +70,7 @@ namespace ArenaServer.Services
                     {
                         chatOutputService.SendMessage("@" + onGoingFight.Defender.DisplayName + " hat die Herausforderung von @" + onGoingFight.Attacker.DisplayName + " nicht angenommen. Die Runde wurde abgebrochen.");
                         expiredFights.Add(onGoingFight);
-                        //onGoingFights.Remove(onGoingFight);
+                        expiredOnGoingFightsToRemoveList.Add(onGoingFight);
                     }
                 }
 
@@ -77,6 +78,11 @@ namespace ArenaServer.Services
                 foreach(var expiredFight in expiredFightToRemoveList)
                 {
                     expiredFights.Remove(expiredFight);
+                }
+
+                foreach(var expiredOnGoingRound in expiredOnGoingFightsToRemoveList)
+                {
+                    onGoingFights.Remove(expiredOnGoingRound);
                 }
 
                 //Wait for one second
@@ -105,6 +111,24 @@ namespace ArenaServer.Services
                 await userService.SetLastFightDt(challengerUser.Id);
                 await userService.SetLastFightDt(challengedUser.Id);
             }
+        }
+
+        //TODO: Zeit in Setting auslagern und dynamisch laden/ausgeben!
+        public async Task StartNPCFight(TransferTwitchuser user, TransferTwitchuser npc, string avName)
+        {
+            var result = await (new UserfightRound(userService, user, npc, false).Fight());
+            var resultString = $"Aus dem Kampf zwischen @{ user.DisplayName } und @{npc.DisplayName} konnte @{result.Winner.DisplayName} erfolgreich hervorgehen.";
+
+            if (result.Winner.Equals(user))
+            {
+                chatOutputService.SendMessage($"{resultString} @{result.Winner.DisplayName} erhält als Gewinn eine Lootbox!");
+            }
+            else
+            {
+                chatOutputService.SendMessage($"{resultString} Versuche es in 48h erneut!");
+            }
+
+            await userService.SetLastAVFightDt(user.Id, avName);
         }
 
         public void CreateFightRound(TransferTwitchuser challenger_user, TransferTwitchuser challenged_user, bool isSelectedFight)

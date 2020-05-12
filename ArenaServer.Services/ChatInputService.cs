@@ -15,13 +15,14 @@ namespace ArenaServer.Services
 
         //Bot data
         private const string name = "ArenaBot";
-        private const string version = "Version 0.1.2 Alpha";
+        private const string version = "Version 0.2 Alpha";
 
         //Services
         private readonly UserService userService;
         private readonly ChatOutputService chatOutputService;
         private readonly BossService bossService;
         private readonly UserfightService userfightService;
+        private readonly AchievementService achievementService;
 
         #endregion
 
@@ -31,12 +32,14 @@ namespace ArenaServer.Services
             UserService userService,
             ChatOutputService chatOutputService,
             BossService bossService,
-            UserfightService userfightService)
+            UserfightService userfightService,
+            AchievementService achievementService)
         {
             this.userService = userService;
             this.chatOutputService = chatOutputService;
             this.bossService = bossService;
             this.userfightService = userfightService;
+            this.achievementService = achievementService;
         }
 
         #endregion
@@ -105,6 +108,11 @@ namespace ArenaServer.Services
             if (twitchChatMessage.Message.StartsWith(TwitchChatCommands.TEAMUSERFIGHT))
             {
                 return await ParticipateInUserFight(twitchChatMessage, true);
+            }
+
+            if (twitchChatMessage.Message.StartsWith(TwitchChatCommands.AVFIGHT))
+            {
+                return await ChallengeNPC(twitchChatMessage);
             }
 
             #endregion
@@ -272,6 +280,38 @@ namespace ArenaServer.Services
 
                 //None of the users are in a fight or waiting for each other. Start a new fight round.
                 userfightService.CreateFightRound(challengingUser, challengedUser, teamFight);
+            }
+
+            return null;
+        }
+
+        private async Task<TwitchChatReplyMessage> ChallengeNPC(TwitchChatMessage twitchChatMessage)
+        {
+            LogOutput.LogInformation($"[AV-Fight] User requested to challenge a npc: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
+
+            var user = await userService.GetUser(twitchChatMessage.TwitchUserId);
+            var avName = twitchChatMessage.GetTargetUserName();
+
+            if(null == user)
+            {
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Du bist noch nicht registriert. Schreibe !registrieren [Glumanda/Schiggy/Bisasam/Pikachu/Evoli] in den Chat, um dich zu registrieren.");
+            }
+
+            if (!user.HasFullFightingTeam())
+            {
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Du hast noch kein vollständiges Team, fange weitere Pokemon!");
+            }
+
+            if (await userService.CanFightAcievement(user.Id, avName))
+            {
+                var virtualNPC = await achievementService.CreateVirtualNPC(avName);
+                chatOutputService.SendMessage($"@{user.DisplayName} fordert {virtualNPC.DisplayName} heraus!");
+
+                await userfightService.StartNPCFight(user, virtualNPC, avName);
+            }
+            else
+            {
+                return new TwitchChatReplyMessage(twitchChatMessage.TwitchUsername, "Du hast dieses Achievement noch nicht freigeschaltet oder musst noch etwas bis zur nächsten Herausforderung warten!");
             }
 
             return null;

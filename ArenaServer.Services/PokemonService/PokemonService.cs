@@ -44,7 +44,7 @@ namespace ArenaServer.Services
             }
             else
             {
-                return ConvertSdPokemonToTransfer(pokemon);
+                return pokemon.ConvertSdPokemonToTransfer();
             }
         }
 
@@ -59,7 +59,7 @@ namespace ArenaServer.Services
 
             var pkm = db.SdPokemon.ToList();
 
-            return ConvertSdPokemonToTransfer(pkm[rnd.Next(0, pkm.Count)]);
+            return pkm[rnd.Next(0, pkm.Count)].ConvertSdPokemonToTransfer();
         }
 
         public TransferPokemon GetRandomPokemonWithRarity(PokemonRarity rarity)
@@ -70,7 +70,7 @@ namespace ArenaServer.Services
 
             if (pokemonWithRarity.Any())
             {
-                return ConvertSdPokemonToTransfer(pokemonWithRarity[rnd.Next(0, pokemonWithRarity.Count)]);
+                return pokemonWithRarity[rnd.Next(0, pokemonWithRarity.Count)].ConvertSdPokemonToTransfer();
             }
             else
             {
@@ -149,24 +149,6 @@ namespace ArenaServer.Services
 
             return 1;
         }
-
-        #region Converting
-
-        public TransferPokemon ConvertSdPokemonToTransfer(SdPokemon entity)
-        {
-            return new TransferPokemon()
-            {
-                Name = entity.Name,
-                Description = entity.Description,
-                HP = entity.HP,
-                Rarity = entity.Rarity,
-                Type = entity.Type,
-                ATK = entity.ATK,
-                ID = entity.SdPokemon_Id
-            };
-        }
-
-        #endregion
 
         #endregion
     }

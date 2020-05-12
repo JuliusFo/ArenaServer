@@ -16,4 +16,8 @@
     <ProjectReference Include="..\ArenaServer.Utils\ArenaServer.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SettingsService\" />
+  </ItemGroup>
+
 </Project>

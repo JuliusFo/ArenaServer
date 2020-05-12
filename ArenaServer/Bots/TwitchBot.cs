@@ -21,6 +21,7 @@ namespace ArenaServer.Bots
         private readonly BossService bossService;
         private readonly PokemonService pokemonService;
         private readonly UserfightService userfightService;
+        private readonly AchievementService achievementService;
 
         private static TwitchAPI api;
         private readonly AppDbContext db;
@@ -67,8 +68,9 @@ namespace ArenaServer.Bots
             chatOutputService = new ChatOutputService(twitchclient, _channelName);
             bossService = new BossService(userService, pokemonService, chatOutputService);
             userfightService = new UserfightService(userService, chatOutputService);
+            this.achievementService = new AchievementService(db);
 
-            chatService = new ChatInputService(userService, chatOutputService, bossService, userfightService);
+            chatService = new ChatInputService(userService, chatOutputService, bossService, userfightService, achievementService);
             destinationChannelName = _channelName;
 
             Connect();

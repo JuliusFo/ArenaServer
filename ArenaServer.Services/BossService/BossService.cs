@@ -25,9 +25,9 @@ namespace ArenaServer.Services
         private BossFightRound currentRound;
 
         //Boss-Settings
-        private int pauseMinutesBetweenRounds = 1;
+        private int pauseSecondsBetweenRounds = 5;
         private int pauseMinutesNotEnoughParticipants = 3;
-        private int waitingSecondsToJoin = 15;
+        private int waitingSecondsToJoin = 5;
         private int minimumParticipants = 1;
 
         #endregion
@@ -115,19 +115,15 @@ namespace ArenaServer.Services
                 currentRound.BossEnemy = pokemonService.GetRandomPokemonWithParticipantCount(currentRound.Participants.Count);
 
                 await CalculateFight();
-                cooldownTime = new TimeSpan(0, pauseMinutesBetweenRounds, 0);
+                cooldownTime = TimeSpan.FromSeconds(pauseSecondsBetweenRounds);
             }
 
-            //Start waiting timer
             new Thread(() =>
             {
                 DecreaseCooldownTime();
             }).Start();
         }
 
-        /// <summary>
-        /// Thread: Decrease cooldown time
-        /// </summary>
         private void DecreaseCooldownTime()
         {
             while (cooldownTime.TotalSeconds > 0)
@@ -152,7 +148,7 @@ namespace ArenaServer.Services
             }
             else
             {
-                atk_participants_bonus = 0.2 * currentRound.Participants.Count;
+                atk_participants_bonus = 200 * currentRound.Participants.Count;
             }
 
             LogOutput.LogInformation("[Bossfight] Calculating boss fight. Boss Pokemon:" + currentRound.BossEnemy.Name + ", HP:" + currentRound.BossEnemy.HP);
@@ -184,6 +180,16 @@ namespace ArenaServer.Services
                 {
                     await userService.AddPokemon(winners[w].Id, currentRound.BossEnemy,false);
 
+                    var avResult = await userService.CheckAndAddAchievement(winners[w].Id);
+
+                    if(avResult.AchievementUnlocked == true)
+                    {
+                        foreach(var unlockedAV in avResult.UnlockedAchievements)
+                        {
+                            chatOutputService.SendMessage(bossOutputFormatter.GetOutput_AvUnlocked(winners[w].DisplayName, unlockedAV.AchievementName, unlockedAV.NPCName));
+                        }
+                    }
+
                     output_message += "@" + winners[w].DisplayName;
                     if (!(w + 1).Equals(winners.Count)) output_message += ", ";
                 }
@@ -191,7 +197,7 @@ namespace ArenaServer.Services
             }
             else
             {
-                output_message = bossOutputFormatter.GetOuput_BossNoWinners(currentRound.BossEnemy.Name, pauseMinutesBetweenRounds);
+                output_message = bossOutputFormatter.GetOuput_BossNoWinners(currentRound.BossEnemy.Name, pauseSecondsBetweenRounds/60);
             }
 
             //Chat output

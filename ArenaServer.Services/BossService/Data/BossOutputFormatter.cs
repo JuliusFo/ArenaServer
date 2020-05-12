@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ArenaServer.Services
+﻿namespace ArenaServer.Services
 {
     public class BossOutputFormatter
     {
@@ -12,6 +8,7 @@ namespace ArenaServer.Services
         private const string bossAppears = "Ein wildes Pokemon streift durch die Gegend. Schreibe !boss, um den Kampf aufzunehmen!";
         private const string bossNoWinners = "Keiner der Trainer konnte {0} besiegen. Versucht es in {1} Minuten noch einmal!";
         private const string bossWinners = "Die Pokemon von folgenden Trainern haben den Kampf gegen {0} gewonnen und konnten es dadurch fangen: ";
+        private const string bossAVUnlocked = "{0} hat das Achievement {1} freigeschaltet und kann den NPC {2} herausfordern.";
 
         #endregion
 
@@ -50,6 +47,11 @@ namespace ArenaServer.Services
         public string GetOutput_BossWinners(string bossEnemyName)
         {
             return string.Format(bossWinners, bossEnemyName);
+        }
+
+        public string GetOutput_AvUnlocked(string username, string avName, string npcName)
+        {
+            return string.Format(bossAVUnlocked, username, avName, npcName);
         }
 
         #endregion
