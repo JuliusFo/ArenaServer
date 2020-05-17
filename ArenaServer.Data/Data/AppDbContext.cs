@@ -35,6 +35,8 @@ namespace ArenaServer.Data
 
         public DbSet<SdAchievementPokemon> SdAchievementPokemon { get; set; }
 
+        public DbSet<SdSettings> SdSettings { get; set; }
+
         #endregion
 
         #region Methods
@@ -51,6 +53,7 @@ namespace ArenaServer.Data
             modelBuilder.ApplyConfiguration(new SdAchievementConfiguration());
             modelBuilder.ApplyConfiguration(new CatchedPokemonConfiguration());
             modelBuilder.ApplyConfiguration(new AchievementsConfiguration());
+            modelBuilder.ApplyConfiguration(new SdAchievementPokemonConfiguration());
             modelBuilder.ApplyConfiguration(new SdAchievementPokemonConfiguration());
         }
 

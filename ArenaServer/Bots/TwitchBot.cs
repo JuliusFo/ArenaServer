@@ -15,32 +15,21 @@ namespace ArenaServer.Bots
     {
         #region Fields
 
-        //Services
         private readonly UserService userService;
         private readonly AccessService accessService;
         private readonly BossService bossService;
         private readonly PokemonService pokemonService;
         private readonly UserfightService userfightService;
         private readonly AchievementService achievementService;
+        private readonly SettingsService settingsService;
+        private readonly ChatOutputService chatOutputService;
+        private readonly ChatInputService chatService;
 
         private static TwitchAPI api;
         private readonly AppDbContext db;
-
-        //Additional clients
         private readonly TwitchClient twitchclient;
-        //private readonly BossBot bossbot;
-        //private readonly FightBot fightbot;
-        private readonly ChatOutputService chatOutputService;
-
-        //Reconnect settings
-        private bool automaticreconnect = true;
-        private int reconnectTries = 0;
-        private readonly int reconnectTriesMAX = 3;
-        private readonly int reconnectWaitTime = 120;
 
         private readonly string destinationChannelName = "Skei7";
-        private readonly ChatInputService chatService;
-
 
         #endregion
 
@@ -63,12 +52,16 @@ namespace ArenaServer.Bots
             api.Settings.AccessToken = accessService.GetTwitchAccessToken();
 
             //Init services
-            userService = new UserService(db,api);
-            pokemonService = new PokemonService(db);
-            chatOutputService = new ChatOutputService(twitchclient, _channelName);
-            bossService = new BossService(userService, pokemonService, chatOutputService);
-            userfightService = new UserfightService(userService, chatOutputService);
             this.achievementService = new AchievementService(db);
+            this.settingsService = new SettingsService(db);
+            this.pokemonService = new PokemonService(db);
+
+            userService = new UserService(db, api);
+            
+            chatOutputService = new ChatOutputService(twitchclient, _channelName);
+            bossService = new BossService(userService, pokemonService, chatOutputService, settingsService);
+            userfightService = new UserfightService(userService, chatOutputService);
+            
 
             chatService = new ChatInputService(userService, chatOutputService, bossService, userfightService, achievementService);
             destinationChannelName = _channelName;
@@ -102,7 +95,6 @@ namespace ArenaServer.Bots
 
         public void Disconnect()
         {
-            automaticreconnect = false;
             twitchclient.Disconnect();
         }
 
@@ -114,38 +106,12 @@ namespace ArenaServer.Bots
 
         private void OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-            reconnectTries = 0;
             LogOutput.LogInformation("Connected to channel '" + destinationChannelName + "'.");
         }
 
         private void OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
-            try
-            {
-                LogOutput.LogInformation("Disconnected from channel '" + destinationChannelName + "'.");
-
-                //Try to reconnect
-                if (automaticreconnect)
-                {
-                    if (reconnectTries < reconnectTriesMAX)
-                    {
-                        twitchclient.Reconnect();
-                        reconnectTries += 1;
-                    }
-                    else
-                    {
-                        //Wait
-                        LogOutput.LogWarning("Waiting " + reconnectWaitTime + " Milliseconds before the next reconnect try.");
-                        System.Threading.Thread.Sleep(reconnectWaitTime);
-                        reconnectTries = 1;
-                        twitchclient.Reconnect();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogOutput.LogError("Error on automatic reconnect." + ex.Message);
-            }
+            Environment.Exit(-1);
         }
 
         #endregion

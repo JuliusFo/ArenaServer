@@ -1,6 +1,6 @@
 ﻿using ArenaServer.Data.Common.Models;
+using ArenaServer.Data.Common.Models.Constants;
 using ArenaServer.Data.Transfer;
-using ArenaServer.Services.Extensions;
 using ArenaServer.Utils;
 using System;
 using System.Collections.Generic;
@@ -19,30 +19,25 @@ namespace ArenaServer.Services
         private readonly PokemonService pokemonService;
         private readonly ChatOutputService chatOutputService;
         private readonly BossOutputFormatter bossOutputFormatter;
+        private readonly SettingsService settingsService;
 
         //Settings
         private TimeSpan cooldownTime;
         private BossFightRound currentRound;
 
-        //Boss-Settings
-        private int pauseSecondsBetweenRounds = 5;
-        private int pauseMinutesNotEnoughParticipants = 3;
-        private int waitingSecondsToJoin = 5;
-        private int minimumParticipants = 1;
-
         #endregion
 
         #region Constructor
 
-        public BossService(UserService userService, PokemonService pokemonService, ChatOutputService chatOutputService)
+        public BossService(UserService userService, PokemonService pokemonService, ChatOutputService chatOutputService, SettingsService settingsService)
         {
-            cooldownTime = new TimeSpan(0, 0, 0);
-            currentRound = null;
-
             this.userService = userService;
             this.pokemonService = pokemonService;
             this.chatOutputService = chatOutputService;
-            this.bossOutputFormatter = new BossOutputFormatter();
+            this.settingsService = settingsService;
+
+            bossOutputFormatter = new BossOutputFormatter();
+            cooldownTime = new TimeSpan(0, 0, 0);
         }
 
         #endregion
@@ -58,22 +53,20 @@ namespace ArenaServer.Services
 
         public bool IsBattleReady()
         {
-            return (cooldownTime.TotalSeconds <= 0);
+            return cooldownTime.TotalSeconds <= 0;
         }
 
         public void StartNewBattleRound()
         {
-            //Init battle round
-            currentRound = new BossFightRound();
-
-            //Start waiting timer
             Task.Run(WaitForBattleStart);
         }
 
         public void AddUserToCurrentRound(TransferTwitchuser enteredUser)
         {
-            if (currentRound == null
-                 || currentRound.Participants.Contains(enteredUser)) return;
+            if (currentRound == null || currentRound.Participants.Contains(enteredUser))
+            {
+                return;
+            }
 
             currentRound.Participants.Add(enteredUser);
         }
@@ -91,6 +84,8 @@ namespace ArenaServer.Services
         private async void WaitForBattleStart()
         {
             var waitedSeconds = 0;
+            var waitingSecondsToJoin = await settingsService.GetIntegerSetting(SettingNames.BOSS_WAITING_SECONDS_TO_JOIN);
+            currentRound = new BossFightRound();
 
             while (waitedSeconds <= waitingSecondsToJoin)
             {
@@ -99,23 +94,28 @@ namespace ArenaServer.Services
             }
             StartFight();
         }
+
         #endregion Pre-round methods
 
         private async void StartFight()
         {
+            var minimumParticipants = await settingsService.GetIntegerSetting(SettingNames.BOSS_PARTICIPANT_MINIMUM);
+            var pauseSecondsNotEnoughParticipants = await settingsService.GetIntegerSetting(SettingNames.BOSS_WAITING_SECONDS_AFTER_FAILED_ROUND);
+
             if (currentRound.Participants.Count < minimumParticipants)
             {
                 LogOutput.LogInformation("[Bossfight] Abort boss round as not enough participants were found.");
-                chatOutputService.SendMessage(bossOutputFormatter.GetOutput_NotEnoughParticipants(pauseMinutesNotEnoughParticipants));
-                cooldownTime = new TimeSpan(0, pauseMinutesNotEnoughParticipants, 0);
+                chatOutputService.SendMessage(bossOutputFormatter.GetOutput_NotEnoughParticipants(pauseSecondsNotEnoughParticipants/60));
+                cooldownTime = TimeSpan.FromSeconds(pauseSecondsNotEnoughParticipants);
                 currentRound = null;
             }
             else
             {
+                LogOutput.LogInformation("[Bossfight] Creating a new boss round.");
                 currentRound.BossEnemy = pokemonService.GetRandomPokemonWithParticipantCount(currentRound.Participants.Count);
 
                 await CalculateFight();
-                cooldownTime = TimeSpan.FromSeconds(pauseSecondsBetweenRounds);
+                cooldownTime = TimeSpan.FromSeconds(await settingsService.GetIntegerSetting(SettingNames.BOSS_WAITING_SECONDS_BETWEEN_ROUNDS));
             }
 
             new Thread(() =>
@@ -128,7 +128,7 @@ namespace ArenaServer.Services
         {
             while (cooldownTime.TotalSeconds > 0)
             {
-                cooldownTime = cooldownTime.Subtract(new TimeSpan(0, 0, 1));
+                cooldownTime = cooldownTime.Subtract(TimeSpan.FromSeconds(1));
                 Thread.Sleep(1000);
             }
 
@@ -144,11 +144,11 @@ namespace ArenaServer.Services
 
             if (currentRound.Participants.Count >= 10)
             {
-                atk_participants_bonus = 2f;
+                atk_participants_bonus = await settingsService.GetFloatSetting(SettingNames.BOSS_PARTICIPANT_BONUS);
             }
             else
             {
-                atk_participants_bonus = 200 * currentRound.Participants.Count;
+                atk_participants_bonus = (await settingsService.GetFloatSetting(SettingNames.BOSS_PARTICIPANT_BONUS_U10)) * currentRound.Participants.Count;
             }
 
             LogOutput.LogInformation("[Bossfight] Calculating boss fight. Boss Pokemon:" + currentRound.BossEnemy.Name + ", HP:" + currentRound.BossEnemy.HP);
@@ -197,7 +197,7 @@ namespace ArenaServer.Services
             }
             else
             {
-                output_message = bossOutputFormatter.GetOuput_BossNoWinners(currentRound.BossEnemy.Name, pauseSecondsBetweenRounds/60);
+                output_message = bossOutputFormatter.GetOuput_BossNoWinners(currentRound.BossEnemy.Name, await settingsService.GetIntegerSetting("BossPauseSecondsBetwweenRounds")/60);
             }
 
             //Chat output
