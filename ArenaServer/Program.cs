@@ -23,7 +23,7 @@ namespace ArenaServer
             var buildService = new BuildService();
             buildService.IncreaseBuildVersion();
 
-            var twitchBot = new TwitchBot("Skei7");
+            var twitchBot = new TwitchBot("GoTTi1337");
 
             string typed = "";
             while (typed != "Exit")

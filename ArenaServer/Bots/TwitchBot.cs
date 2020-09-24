@@ -3,11 +3,14 @@ using ArenaServer.Data.Common.Models;
 using ArenaServer.Services;
 using ArenaServer.Utils;
 using System;
+using System.Buffers;
 using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
+using TwitchLib.PubSub;
+using TwitchLib.PubSub.Events;
 
 namespace ArenaServer.Bots
 {
@@ -27,9 +30,10 @@ namespace ArenaServer.Bots
 
         private static TwitchAPI api;
         private readonly AppDbContext db;
-        private readonly TwitchClient twitchclient;
+        private readonly TwitchClient twitchClient;
+        private readonly TwitchPubSub twitchPubSub;
 
-        private readonly string destinationChannelName = "Skei7";
+        private readonly string destinationChannelName;
 
         #endregion
 
@@ -38,7 +42,8 @@ namespace ArenaServer.Bots
         public TwitchBot(string _channelName)
         {
             //Init Client
-            twitchclient = new TwitchClient();
+            twitchClient = new TwitchClient();
+            twitchPubSub = new TwitchPubSub();
 
             //Init Database
             this.db = new AppDbContextFactory().Create();
@@ -58,7 +63,7 @@ namespace ArenaServer.Bots
 
             userService = new UserService(db, api);
             
-            chatOutputService = new ChatOutputService(twitchclient, _channelName);
+            chatOutputService = new ChatOutputService(twitchClient, _channelName);
             bossService = new BossService(userService, pokemonService, chatOutputService, settingsService);
             userfightService = new UserfightService(userService, chatOutputService);
             
@@ -84,18 +89,19 @@ namespace ArenaServer.Bots
         public void Connect()
         {
             //Connect
-            twitchclient.Initialize(new ConnectionCredentials(destinationChannelName, accessService.GetTwitchAccessToken()), channel: destinationChannelName);
-            twitchclient.Connect();
+            twitchClient.Initialize(new ConnectionCredentials(destinationChannelName, accessService.GetTwitchAccessToken()), channel: destinationChannelName);
+            twitchClient.Connect();
+            twitchPubSub.Connect();
 
             //Events
-            twitchclient.OnJoinedChannel += OnJoinedChannel;
-            twitchclient.OnDisconnected += OnDisconnected;
-            twitchclient.OnMessageReceived += OnMessageReceived;
+            twitchClient.OnJoinedChannel += OnJoinedChannel;
+            twitchClient.OnDisconnected += OnDisconnected;
+            twitchClient.OnMessageReceived += OnMessageReceived;
         }
 
         public void Disconnect()
         {
-            twitchclient.Disconnect();
+            twitchClient.Disconnect();
         }
 
         #endregion
@@ -127,7 +133,7 @@ namespace ArenaServer.Bots
                 TwitchUserId = e.ChatMessage.UserId
             });
 
-            if(null != output) twitchclient.SendMessage(destinationChannelName, output.ToReplyMessage());
+            if(null != output) twitchClient.SendMessage(destinationChannelName, output.ToReplyMessage());
         }
 
         #endregion
