@@ -87,8 +87,31 @@ namespace ArenaServer.Services
 		{
 			if (await IsUserRegistered(userid))
 			{
-				var dbUser = await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userid)
-				.Include(u => u.CatchedPokemon)
+				var dbUser = await db.Twitchuser.Where(tu => tu.Twitchuser_Id == userid).Select(u => new Twitchuser()
+				{
+					DisplayName = u.DisplayName,
+					Dt_Last_Userfight = u.Dt_Last_Userfight,
+					Kz_Log_Enabled = u.Kz_Log_Enabled,
+					Twitchuser_Id = u.Twitchuser_Id,
+					CatchedPokemon = u.CatchedPokemon.Select(c => new CatchedPokemon()
+					{
+						Twitchuser_Id = c.Twitchuser_Id,
+						SdPokemon_Id = c.SdPokemon_Id,
+						CatchedPokemon_Id = c.CatchedPokemon_Id,
+						Pokemon_AmountCatched = c.Pokemon_AmountCatched,
+						Pokemon_AmountOnFightingTeam = c.Pokemon_AmountOnFightingTeam,
+						SdPokemon = new SdPokemon()
+						{
+							SdPokemon_Id = c.SdPokemon_Id,
+							ATK = c.SdPokemon.ATK,
+							Description = c.SdPokemon.Description,
+							HP = c.SdPokemon.HP,
+							Name = c.SdPokemon.Name,
+							Rarity = c.SdPokemon.Rarity,
+							Type = c.SdPokemon.Type
+						}
+					})
+				})
 				.FirstOrDefaultAsync();
 
 				var returnUser = new TransferTwitchuser()
