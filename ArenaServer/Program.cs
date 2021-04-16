@@ -5,33 +5,38 @@ using System;
 
 namespace ArenaServer
 {
-    class Program
-    {
-        #region Fields
+	class Program
+	{
+		#region Fields
 
 
 
-        #endregion
+		#endregion
 
-        static void Main()
-        {
-            LogOutput.LogInformation("----------------------");
-            LogOutput.LogInformation("ArenaBot");
-            LogOutput.LogInformation("----------------------");
+		static void Main()
+		{
+			LogOutput.LogInformation("----------------------");
+			LogOutput.LogInformation("ArenaBot");
+			LogOutput.LogInformation("----------------------");
 
-            //Increase build version
-            var buildService = new BuildService();
-            buildService.IncreaseBuildVersion();
+			//Increase build version
+			var buildService = new BuildService();
+			buildService.IncreaseBuildVersion();
 
-            var twitchBot = new TwitchBot("GoTTi1337");
+			var twitchBot = new TwitchBot("Skei7");
 
-            string typed = "";
-            while (typed != "Exit")
-            {
-                typed = Console.ReadLine();
-            }
-            
-            twitchBot.Disconnect();
-        }
-    }
+			bool checkInput = true;
+			while (checkInput)
+			{
+				var typed = Console.ReadLine();
+
+				if (typed.ToLower() == "exit")
+				{
+					checkInput = false;
+				}
+			}
+
+			twitchBot.Disconnect();
+		}
+	}
 }

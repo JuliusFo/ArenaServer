@@ -4,60 +4,59 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArenaServer.Data
 {
-    public class AppDbContext : DbContext
-    {
-        #region Fields
+	public class AppDbContext : DbContext
+	{
+		#region Fields
 
 
 
-        #endregion
+		#endregion
 
-        #region Constructor
+		#region Constructor
 
-        public AppDbContext(DbContextOptions options) : base(options)
-        {
+		public AppDbContext(DbContextOptions options) : base(options)
+		{
 
-        }
+		}
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        public DbSet<Twitchuser> Twitchuser { get; set; }
+		public DbSet<Twitchuser> Twitchuser { get; set; }
 
-        public DbSet<SdPokemon> SdPokemon { get; set; }
+		public DbSet<SdPokemon> SdPokemon { get; set; }
 
-        public DbSet<SdAchievement> SdAchievement { get; set; }
+		public DbSet<SdAchievement> SdAchievement { get; set; }
 
-        public DbSet<CatchedPokemon> CatchedPokemon { get; set; }
+		public DbSet<CatchedPokemon> CatchedPokemon { get; set; }
 
-        public DbSet<Achievements> Achievements { get; set; }
+		public DbSet<Achievements> Achievements { get; set; }
 
-        public DbSet<SdAchievementPokemon> SdAchievementPokemon { get; set; }
+		public DbSet<SdAchievementPokemon> SdAchievementPokemon { get; set; }
 
-        public DbSet<SdSettings> SdSettings { get; set; }
+		public DbSet<SdSettings> SdSettings { get; set; }
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            
-        }
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		{
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfiguration(new TwitchuserConfiguration());
-            modelBuilder.ApplyConfiguration(new SdPokemonConfiguration());
-            modelBuilder.ApplyConfiguration(new SdAchievementConfiguration());
-            modelBuilder.ApplyConfiguration(new CatchedPokemonConfiguration());
-            modelBuilder.ApplyConfiguration(new AchievementsConfiguration());
-            modelBuilder.ApplyConfiguration(new SdAchievementPokemonConfiguration());
-            modelBuilder.ApplyConfiguration(new SdAchievementPokemonConfiguration());
-        }
+		}
 
-        #endregion
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.ApplyConfiguration(new TwitchuserConfiguration());
+			modelBuilder.ApplyConfiguration(new SdPokemonConfiguration());
+			modelBuilder.ApplyConfiguration(new SdAchievementConfiguration());
+			modelBuilder.ApplyConfiguration(new CatchedPokemonConfiguration());
+			modelBuilder.ApplyConfiguration(new AchievementsConfiguration());
+			modelBuilder.ApplyConfiguration(new SdAchievementPokemonConfiguration());
+			modelBuilder.ApplyConfiguration(new SdAchievementPokemonConfiguration());
+		}
 
-    }
+		#endregion
+	}
 }

@@ -3,57 +3,57 @@ using System.Text;
 
 namespace ArenaServer.Services
 {
-    public class AccessService
-    {
-        #region Fields
+	public class AccessService
+	{
+		#region Fields
 
-        private readonly string path = "C:/Temp/creds.txt";
+		private readonly string path = "F:/Temp/Connections.ini";
 
-        #endregion
+		#endregion
 
-        #region Constructor
+		#region Constructor
 
-        public AccessService()
-        {
+		public AccessService()
+		{
 
-        }
+		}
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
 
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        public string GetTwitchClientID()
-        {
-            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            string text;
+		public string GetTwitchClientID()
+		{
+			var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+			string text;
 
-            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
-            {
-                text = streamReader.ReadToEnd();
-            }
+			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+			{
+				text = streamReader.ReadToEnd();
+			}
 
-            return text.Split('#')[0];
-        }
+			return text.Split('#')[0];
+		}
 
-        public string GetTwitchAccessToken()
-        {
-            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            string text;
+		public string GetTwitchAccessToken()
+		{
+			var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+			string text;
 
-            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
-            {
-                text = streamReader.ReadToEnd();
-            }
+			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+			{
+				text = streamReader.ReadToEnd();
+			}
 
-            return text.Split('#')[1];
-        }
+			return text.Split('#')[1];
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
