@@ -58,6 +58,7 @@ namespace ArenaServer.Services
 
 		public void StartNewBattleRound()
 		{
+			currentRound = new BossFightRound();
 			Task.Run(WaitForBattleStart);
 		}
 
@@ -85,7 +86,6 @@ namespace ArenaServer.Services
 		{
 			var waitedSeconds = 0;
 			var waitingSecondsToJoin = await settingsService.GetIntegerSetting(SettingNames.BOSS_WAITING_SECONDS_TO_JOIN);
-			currentRound = new BossFightRound();
 
 			while (waitedSeconds <= waitingSecondsToJoin)
 			{
@@ -140,7 +140,6 @@ namespace ArenaServer.Services
 			List<TransferTwitchuser> winners = new List<TransferTwitchuser>();
 			var bossOriginalHP = currentRound.BossEnemy.HP;
 			double atk_participants_bonus;
-			var bossParticipant = CreateBossParticipant(currentRound.BossEnemy);
 
 			if (currentRound.Participants.Count >= 10)
 			{
@@ -157,9 +156,9 @@ namespace ArenaServer.Services
 			for (int i = 0; i < currentRound.Participants.Count; i++)
 			{
 				//Reset fight values
-				currentRound.BossEnemy.HP = bossOriginalHP;
+				currentRound.BossEnemy.HP = bossOriginalHP / 2;
 
-				var fightOptions = new FightOptions(currentRound.Participants[i].ToFightParticipantRandomPokemon(), bossParticipant, false, atk_participants_bonus);
+				var fightOptions = new FightOptions(currentRound.Participants[i].ToFightParticipantRandomPokemon(), CreateBossParticipant(currentRound.BossEnemy), false, atk_participants_bonus);
 				var result = new Fight().CalculateUnlimited(fightOptions);
 
 				if (result.Winner.Equals(currentRound.Participants[i]))
@@ -197,7 +196,7 @@ namespace ArenaServer.Services
 			}
 			else
 			{
-				output_message = bossOutputFormatter.GetOuput_BossNoWinners(currentRound.BossEnemy.Name, await settingsService.GetIntegerSetting("BossPauseSecondsBetwweenRounds") / 60);
+				output_message = bossOutputFormatter.GetOuput_BossNoWinners(currentRound.BossEnemy.Name, await settingsService.GetIntegerSetting(SettingNames.BOSS_WAITING_SECONDS_BETWEEN_ROUNDS) / 60);
 			}
 
 			//Chat output

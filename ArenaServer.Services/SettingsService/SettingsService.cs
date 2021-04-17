@@ -40,32 +40,28 @@ namespace ArenaServer.Services
 
 		public async Task<int> GetIntegerSetting(string settingName)
 		{
-			var setting_name = "BossPauseSecondsNotEnoughParticipants";
-			var result = await db.SdSettings.Where(s => s.Name == setting_name).Select(r => r.Value).FirstOrDefaultAsync();
+			var result = await db.SdSettings.Where(s => s.Name == settingName).Select(r => r.Value).FirstOrDefaultAsync();
 
 			return int.Parse(result);
 		}
 
 		public async Task<string> GetTextSetting(string settingName)
 		{
-			var setting_name = "BossPauseSecondsNotEnoughParticipants";
-			var result = await db.SdSettings.Where(s => s.Name == setting_name).Select(r => r.Value).FirstOrDefaultAsync();
+			var result = await db.SdSettings.Where(s => s.Name == settingName).Select(r => r.Value).FirstOrDefaultAsync();
 
 			return result;
 		}
 
 		public async Task<bool> GetBoolSetting(string settingName)
 		{
-			var setting_name = "BossPauseSecondsNotEnoughParticipants";
-			var result = await db.SdSettings.Where(s => s.Name == setting_name).Select(r => r.Value).FirstOrDefaultAsync();
+			var result = await db.SdSettings.Where(s => s.Name == settingName).Select(r => r.Value).FirstOrDefaultAsync();
 
 			return bool.Parse(result);
 		}
 
 		public async Task<float> GetFloatSetting(string settingName)
 		{
-			var setting_name = "BossPauseSecondsNotEnoughParticipants";
-			var result = await db.SdSettings.Where(s => s.Name == setting_name).Select(r => r.Value).FirstOrDefaultAsync();
+			var result = await db.SdSettings.Where(s => s.Name == settingName).Select(r => r.Value).FirstOrDefaultAsync();
 
 			return float.Parse(result);
 		}

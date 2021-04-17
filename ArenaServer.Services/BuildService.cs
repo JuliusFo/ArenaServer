@@ -14,7 +14,7 @@ namespace ArenaServer.Services
 		private readonly string minor_version = "1";
 		private readonly string revision = "0";
 		private string build = "";
-		private string informational_version = " Alpha";
+		private readonly string informational_version = " Alpha";
 
 		#endregion
 
