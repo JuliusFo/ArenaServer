@@ -189,7 +189,7 @@ namespace ArenaServer.Services
 						}
 					}
 
-					output_message += "@" + winners[w].DisplayName;
+					output_message += winners[w].DisplayName;
 					if (!(w + 1).Equals(winners.Count)) output_message += ", ";
 				}
 				output_message += ".";

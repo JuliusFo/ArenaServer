@@ -223,7 +223,7 @@ namespace ArenaServer.Services
 			{
 				LogOutput.LogInformation($"[Bossfight] Creating a new boss round: {twitchChatMessage.TwitchUsername}, ID {twitchChatMessage.TwitchUserId}");
 				bossService.StartNewBattleRound();
-				chatOutputService.SendMessage("@" + twitchChatMessage.TwitchUsername + " hat ein wildes Pokemon entdeckt! Schreibe !boss in den Chat, um ihm im Kampf beizustehen.");
+				chatOutputService.SendMessage(twitchChatMessage.TwitchUsername + " hat ein wildes Pokemon entdeckt! Schreibe !boss in den Chat, um ihm im Kampf beizustehen.");
 			}
 
 			bossService.AddUserToCurrentRound(user_entered_battle);
@@ -271,12 +271,12 @@ namespace ArenaServer.Services
 			//Check if the challenged player already is challenged by the challenger
 			if (userfightService.User_IsChallengedBy(challengingUser, challengedUser))
 			{
-				chatOutputService.SendMessage("@" + challengingUser.DisplayName + " hat die Herausforderung von @" + challengedUser.DisplayName + " angenommen!");
+				chatOutputService.SendMessage(challengingUser.DisplayName + " hat die Herausforderung von " + challengedUser.DisplayName + " angenommen!");
 				await userfightService.StartFight(challengingUser, challengedUser);
 			}
 			else
 			{
-				chatOutputService.SendMessage("@" + challengingUser.DisplayName + " fordert @" + challengedUser.DisplayName + " zu einem Duell heraus! Schreibe !fight @" + challengingUser.DisplayName + ", um den Kampf anzunehmen!");
+				chatOutputService.SendMessage(challengingUser.DisplayName + " fordert " + challengedUser.DisplayName + " zu einem Duell heraus! Schreibe !fight " + challengingUser.DisplayName + ", um den Kampf anzunehmen!");
 
 				//None of the users are in a fight or waiting for each other. Start a new fight round.
 				userfightService.CreateFightRound(challengingUser, challengedUser, teamFight);
@@ -305,7 +305,7 @@ namespace ArenaServer.Services
 			if (await userService.CanFightAcievement(user.Id, avName))
 			{
 				var virtualNPC = await achievementService.CreateVirtualNPC(avName);
-				chatOutputService.SendMessage($"@{user.DisplayName} fordert {virtualNPC.DisplayName} heraus!");
+				chatOutputService.SendMessage($"{user.DisplayName} fordert {virtualNPC.DisplayName} heraus!");
 
 				await userfightService.StartNPCFight(user, virtualNPC, avName);
 			}
