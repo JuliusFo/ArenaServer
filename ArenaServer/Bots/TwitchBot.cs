@@ -3,14 +3,12 @@ using ArenaServer.Data.Common.Models;
 using ArenaServer.Services;
 using ArenaServer.Utils;
 using System;
-using System.Buffers;
 using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Events;
 using TwitchLib.PubSub;
-using TwitchLib.PubSub.Events;
 
 namespace ArenaServer.Bots
 {
