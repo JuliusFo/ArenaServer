@@ -28,7 +28,7 @@ namespace ArenaServer.Data
 
 		public string GetDatabaseConnection()
 		{
-			var fileStream = new FileStream("F:/Temp/Connections.ini", FileMode.Open, FileAccess.Read);
+			var fileStream = new FileStream("E:/Programmierung/Temp/Connections.ini", FileMode.Open, FileAccess.Read);
 			string text;
 
 			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))

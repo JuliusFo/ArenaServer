@@ -26,6 +26,7 @@ namespace ArenaServer
 			var twitchBot = new TwitchBot("Skei7");
 
 			bool checkInput = true;
+			
 			while (checkInput)
 			{
 				var typed = Console.ReadLine();

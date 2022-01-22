@@ -65,7 +65,6 @@ namespace ArenaServer.Bots
 			bossService = new BossService(userService, pokemonService, chatOutputService, settingsService);
 			userfightService = new UserfightService(userService, chatOutputService);
 
-
 			chatService = new ChatInputService(userService, chatOutputService, bossService, userfightService, achievementService);
 			destinationChannelName = _channelName;
 
@@ -87,7 +86,7 @@ namespace ArenaServer.Bots
 		public void Connect()
 		{
 			//Connect
-			twitchClient.Initialize(new ConnectionCredentials("P_Arenabot", accessService.GetTwitchAccessToken()), channel: destinationChannelName);
+			twitchClient.Initialize(new ConnectionCredentials("P_Arenabot", accessService.GetTwitchOAuth()), channel: destinationChannelName);
 			twitchClient.Connect();
 			twitchPubSub.Connect();
 

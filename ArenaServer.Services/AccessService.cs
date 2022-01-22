@@ -7,7 +7,7 @@ namespace ArenaServer.Services
 	{
 		#region Fields
 
-		private readonly string path = "F:/Temp/Connections.ini";
+		private readonly string path = "E:/Programmierung/Temp/Connections.ini";
 
 		#endregion
 
@@ -52,6 +52,19 @@ namespace ArenaServer.Services
 			}
 
 			return text.Split('#')[1];
+		}
+
+		public string GetTwitchOAuth()
+        {
+			var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+			string text;
+
+			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+			{
+				text = streamReader.ReadToEnd();
+			}
+
+			return text.Split('#')[3];
 		}
 
 		#endregion
