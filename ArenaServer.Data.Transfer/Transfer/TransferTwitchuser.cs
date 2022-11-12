@@ -13,7 +13,7 @@ namespace ArenaServer.Data.Transfer
 
         public bool KzLogEnabled { get; set; }
 
-        public DateTime LastUserFight;
+        public DateTime? LastUserFight;
 
         public List<TransferCatchedPokemon> CatchedPokemonList { get; set; } = new List<TransferCatchedPokemon>();
 
